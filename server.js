@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔗 WordPress base URL
-const WP_API = "https://firstproduc.wordpress.com/wp-json/wp/v2";
+const WP_API = "https://public-api.wordpress.com/wp/v2/sites/firstproduc.wordpress.com";
 
 // ✅ Fetch public posts
 app.get("/api/posts", async (req, res) => {
@@ -15,6 +15,7 @@ app.get("/api/posts", async (req, res) => {
     const wpResponse = await axios.get(`${WP_API}/posts`);
     res.json(wpResponse.data);
   } catch (err) {
+    console.error("❌ Error fetching posts:", err.message);
     res.status(500).json({ error: "Failed to fetch posts" });
   }
 });
