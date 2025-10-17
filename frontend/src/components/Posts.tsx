@@ -1,12 +1,22 @@
 import { useEffect, useState } from "react";
 
+interface WordPressPost {
+  id: number;
+  title: {
+    rendered: string;
+  };
+  content: {
+    rendered: string;
+  };
+}
+
 export default function Posts() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<WordPressPost[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:5000/api/posts")
       .then(res => res.json())
-      .then(data => setPosts(data))
+      .then((data: WordPressPost[]) => setPosts(data))
       .catch(err => console.error("Failed to load posts:", err));
   }, []);
 
@@ -18,8 +28,10 @@ export default function Posts() {
       ) : (
         posts.map((post) => (
           <article key={post.id} className="mb-8 p-4 border-b border-gray-300">
-            <h2 className="text-xl font-semibold mb-2"
-              dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
+            <h2 
+              className="text-xl font-semibold mb-2"
+              dangerouslySetInnerHTML={{ __html: post.title.rendered }} 
+            />
             <div dangerouslySetInnerHTML={{ __html: post.content.rendered }} />
           </article>
         ))
