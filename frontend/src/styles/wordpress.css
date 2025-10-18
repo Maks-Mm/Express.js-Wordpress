@@ -1,43 +1,61 @@
-/* Center WordPress content */
+/* WordPress Block Styles */
+.wp-block-image {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.wp-block-image img {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+.wp-block-image img:hover {
+  transform: scale(1.02);
+}
+
+.wp-block-heading {
+  color: #1f2937;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.wp-block-quote {
+  border-left: 4px solid #3b82f6;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  background-color: #f8fafc;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #4b5563;
+}
+
+.wp-block-gallery {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+/* Prose overrides for better WordPress content */
 .prose {
-  text-align: center;
+  max-width: none !important;
 }
 
-/* Ensure images and media are centered */
-.prose img,
-.prose .wp-block-image,
-.prose .wp-block-gallery {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
+.prose img {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }
 
-/* Center align specific WordPress blocks */
-.wp-block-image,
-.wp-block-gallery,
-.wp-block-quote,
-.wp-block-pullquote,
-.wp-block-table {
-  margin-left: auto !important;
-  margin-right: auto !important;
-  text-align: center;
-}
-
-/* Center headings and paragraphs */
-.wp-block-heading,
-.wp-block-paragraph {
-  text-align: center;
-}
-
-/* Center lists while keeping text alignment natural */
-.wp-block-list {
-  display: inline-block;
-  text-align: left;
-  margin-left: auto !important;
-  margin-right: auto !important;
-}
-
-/* Center gallery items */
-.wp-block-gallery .blocks-gallery-grid {
-  justify-content: center;
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .wp-block-image img {
+    border-radius: 8px;
+  }
+  
+  .prose {
+    font-size: 0.875rem !important;
+  }
 }

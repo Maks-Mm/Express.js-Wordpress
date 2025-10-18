@@ -6,18 +6,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔗 WordPress base URL
 const WP_API = "https://public-api.wordpress.com/wp/v2/sites/firstproduc.wordpress.com";
 
-// ✅ Fetch public posts
+// ✅ Fetch public posts with better logging
 app.get("/api/posts", async (req, res) => {
+  console.log("📥 Fetching posts from WordPress...");
   try {
-    const wpResponse = await axios.get(`${WP_API}/posts`);
+    const url = `${WP_API}/posts`;
+    console.log("🔗 URL:", url);
+    const wpResponse = await axios.get(url);
+    console.log(`✅ Received ${wpResponse.data.length} posts`);
     res.json(wpResponse.data);
   } catch (err) {
-    console.error("❌ Error fetching posts:", err.message);
-    res.status(500).json({ error: "Failed to fetch posts" });
+    console.error("❌ Error fetching posts:", err.response?.status, err.message);
+    res.status(500).json({
+      error: "Failed to fetch posts",
+      details: err.response?.data || err.message
+    });
   }
 });
 
-app.listen(5000, () => console.log("✅ Express backend running on http://localhost:5000"));
+
+// Health check endpoint
+app.get("/api/health", (req, res) => {
+  res.json({ status: "OK", message: "Server is running" });
+});
+
+app.listen(5000, () => {
+  console.log("✅ Express backend running on http://localhost:5000");
+  console.log("📝 Available endpoints:");
+  console.log("   GET /api/health - Health check");
+  console.log("   GET /api/posts - Fetch WordPress posts");
+});
