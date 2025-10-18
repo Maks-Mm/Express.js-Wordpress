@@ -36,14 +36,14 @@ export default function Posts() {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
         </div>
       ) : (
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-1">
+        <div className="flex flex-col items-center"> {/* ← Add this wrapper */}
           {posts.map((post) => (
             <article 
               key={post.id} 
-              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden"
+              className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden w-full max-w-3xl mb-8" // ← Added max-w-3xl and w-full
             >
-              <div className="p-6">
-                {/* Post Header - FIXED */}
+              <div className="p-6 text-center"> {/* ← Added text-center */}
+                {/* Post Header */}
                 <div className="mb-4">
                   <h2 
                     className="text-2xl font-bold text-gray-800 hover:text-blue-600 transition-colors cursor-pointer"
@@ -54,7 +54,7 @@ export default function Posts() {
                   </time>
                 </div>
 
-                {/* Post Content - FIXED: WordPress styles applied here */}
+                {/* Post Content - Centered */}
                 <div 
                   className="prose prose-lg max-w-none 
                     prose-headings:text-gray-800
@@ -64,17 +64,14 @@ export default function Posts() {
                     prose-blockquote:border-blue-200 prose-blockquote:bg-blue-50
                     prose-strong:text-gray-800
                     prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded
+                    text-center mx-auto /* ← Added text-center and mx-auto */
                     
                     /* WordPress block styles */
-                    [&_.wp-block-image]:rounded-xl 
-                    [&_.wp-block-image]:shadow-lg
-                    [&_.wp-block-quote]:border-l-4 
-                    [&_.wp-block-quote]:border-blue-500
-                    [&_.wp-block-quote]:pl-4
-                    [&_.wp-block-quote]:italic
-                    [&_.wp-block-gallery]:grid
-                    [&_.wp-block-gallery]:gap-4
-                    [&_.wp-block-gallery]:my-6"
+                    [&_.wp-block-image]:mx-auto /* ← Center images */
+                    [&_.wp-block-image]:text-center
+                    [&_.wp-block-gallery]:flex
+                    [&_.wp-block-gallery]:justify-center
+                    [&_.wp-block-gallery]:items-center"
                   dangerouslySetInnerHTML={{ __html: post.content.rendered }} 
                 />
 
