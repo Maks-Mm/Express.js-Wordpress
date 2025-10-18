@@ -1,0 +1,48 @@
+/* Style WordPress-specific classes */
+.wp-block-image img {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.wp-block-image img:hover {
+  transform: scale(1.02);
+}
+
+.wp-block-gallery {
+  display: grid;
+  gap: 1rem;
+  margin: 2rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.wp-block-quote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1.5rem;
+  font-style: italic;
+  color: #4b5563;
+  background-color: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 0 8px 8px 0;
+  margin: 1.5rem 0;
+}
+
+/* Additional WordPress block styles */
+.wp-block-heading {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.wp-block-paragraph {
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.wp-block-list {
+  padding-left: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.wp-block-list li {
+  margin-bottom: 0.5rem;
+}
