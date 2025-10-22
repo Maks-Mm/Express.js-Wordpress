@@ -1,0 +1,64 @@
+/* Glass Effect Button Styles */
+.btn-glass {
+  padding: 14px 40px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+}
+
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+  transform: translateY(-3px);
+}
+
+.btn-glass:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+}
+
+/* Ensure the body has a gradient background for the glass effect to work properly */
+body {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Rest of your existing WordPress Block Styles remain the same */
+/* WordPress Block Styles - Enhanced */
+.wp-block-image {
+  margin: 2rem auto;
+  text-align: center;
+  max-width: 100%;
+}
+
+.wp-block-image img {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  height: auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wp-block-image img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.15);
+}
+
+.wp-block-image figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* ... rest of your existing CSS styles ... */

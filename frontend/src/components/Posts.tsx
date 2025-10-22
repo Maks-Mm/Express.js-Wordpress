@@ -61,7 +61,7 @@ export default function Posts() {
         <p className="text-red-600 font-semibold mb-4">⚠️ {error}</p>
         <button
           onClick={fetchPosts}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+          className="btn-glass"
         >
           Try Again
         </button>
@@ -75,9 +75,9 @@ export default function Posts() {
       <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
         <button
           onClick={handleBackClick}
-          className="text-blue-600 hover:text-blue-800 font-semibold mb-6 transition-colors"
+          className="btn-glass mb-6"
         >
-          ← Back
+          ← Back to Posts
         </button>
 
         <h1
@@ -114,16 +114,21 @@ export default function Posts() {
       </header>
 
       {posts.length === 0 ? (
-        <p className="text-center text-gray-500 text-lg py-12">
-          No posts found.
-        </p>
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg mb-4">No posts found.</p>
+          <button
+            onClick={fetchPosts}
+            className="btn-glass"
+          >
+            Refresh Posts
+          </button>
+        </div>
       ) : (
         <div className="space-y-6">
           {posts.map((post) => (
             <article
               key={post.id}
-              onClick={() => handlePostClick(post)}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 cursor-pointer"
+              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6"
             >
               <h2
                 className="text-2xl font-semibold text-gray-900 mb-1 hover:text-blue-600 transition-colors"
@@ -147,7 +152,10 @@ export default function Posts() {
                 }}
               />
 
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition-colors">
+              <button 
+                onClick={() => handlePostClick(post)}
+                className="btn-glass"
+              >
                 Read Full Article
               </button>
             </article>
