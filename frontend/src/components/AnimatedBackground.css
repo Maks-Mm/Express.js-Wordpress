@@ -1,0 +1,16 @@
+.animated-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(135deg, #1e1633 0%, #2d1b69 50%, #1e1633 100%),
+    url('https://plus.unsplash.com/premium_photo-1721671634764-89ea581ab60c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1332');
+  background-blend-mode: overlay;
+  background-size: cover, 120%;
+  background-position: center;
+  z-index: -1;
+  animation: backgroundMove 30s ease-in-out infinite, subtlePulse 15s ease-in-out infinite;
+  filter: brightness(0.8) contrast(1.1);
+}

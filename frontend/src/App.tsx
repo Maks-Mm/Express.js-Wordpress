@@ -1,12 +1,17 @@
-import './App.css'
-import Posts from './components/Posts.jsx' 
-function App() {
+// App.tsx
+import './App.css';
+import Posts from './components/Posts';
+import AnimatedBackground from './components/AnimatedBackground';
 
+function App() {
   return (
-    <div>
-      <Posts />
+    <div className="app-container">
+      <AnimatedBackground />
+      <div className="content-wrapper">
+        <Posts />
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

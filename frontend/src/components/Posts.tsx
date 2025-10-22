@@ -1,3 +1,4 @@
+// components/Posts.tsx
 import { useEffect, useState } from "react";
 
 interface WordPressPost {
@@ -26,7 +27,7 @@ export default function Posts() {
     setSelectedPost(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/posts"); // WP API
+      const res = await fetch("http://localhost:5000/api/posts");
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data: WordPressPost[] = await res.json();
       setPosts(data);
@@ -44,39 +45,30 @@ export default function Posts() {
 
   const handleBackClick = () => setSelectedPost(null);
 
-  // Loading state
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-[50vh] text-center">
-        <div className="loader border-4 border-gray-200 border-t-blue-600 rounded-full w-10 h-10 animate-spin mb-3"></div>
+        <div className="loader mb-3"></div>
         <p className="text-gray-600">Loading posts...</p>
       </div>
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="text-center py-16">
-        <p className="text-red-600 font-semibold mb-4">⚠️ {error}</p>
-        <button
-          onClick={fetchPosts}
-          className="btn-glass"
-        >
+        <p className="text-red-400 font-semibold mb-4">⚠️ {error}</p>
+        <button onClick={fetchPosts} className="btn-glass">
           Try Again
         </button>
       </div>
     );
   }
 
-  // Single post view
   if (selectedPost) {
     return (
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
-        <button
-          onClick={handleBackClick}
-          className="btn-glass mb-6"
-        >
+      <div className="max-w-3xl mx-auto post-card mt-8">
+        <button onClick={handleBackClick} className="btn-glass mb-6">
           ← Back to Posts
         </button>
 
@@ -100,7 +92,6 @@ export default function Posts() {
     );
   }
 
-  // Posts list view
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
       <header className="text-center mb-10">
@@ -116,10 +107,7 @@ export default function Posts() {
       {posts.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg mb-4">No posts found.</p>
-          <button
-            onClick={fetchPosts}
-            className="btn-glass"
-          >
+          <button onClick={fetchPosts} className="btn-glass">
             Refresh Posts
           </button>
         </div>
@@ -128,10 +116,11 @@ export default function Posts() {
           {posts.map((post) => (
             <article
               key={post.id}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6"
+              className="post-card hover:shadow-xl transition-all duration-300"
             >
               <h2
-                className="text-2xl font-semibold text-gray-900 mb-1 hover:text-blue-600 transition-colors"
+                className="text-2xl font-semibold text-gray-900 mb-1 hover:text-blue-400 transition-colors cursor-pointer"
+                onClick={() => handlePostClick(post)}
                 dangerouslySetInnerHTML={{ __html: post.title.rendered }}
               />
               <p className="text-sm text-gray-500 mb-3">
