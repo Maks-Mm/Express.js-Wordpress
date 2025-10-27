@@ -92,9 +92,10 @@ export default function Posts() {
         </p>
 
         <div
-          className="prose prose-lg max-w-none text-gray-800"
+          className="wp-content prose prose-lg max-w-none"
           dangerouslySetInnerHTML={{ __html: selectedPost.content.rendered }}
         />
+
       </div>
     );
   }
@@ -149,7 +150,7 @@ export default function Posts() {
                 }}
               />
 
-              <button 
+              <button
                 onClick={() => handlePostClick(post)}
                 className="btn-glass"
               >

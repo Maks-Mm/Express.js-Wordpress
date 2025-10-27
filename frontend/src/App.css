@@ -165,3 +165,61 @@
     margin: 0.5rem 0;
   }
 }
+/* WordPress Content Styling */
+.wp-content {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.7;
+}
+
+.wp-content h1,
+.wp-content h2,
+.wp-content h3,
+.wp-content h4,
+.wp-content h5,
+.wp-content h6 {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.wp-content p {
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 1rem;
+}
+
+.wp-content a {
+  color: rgba(59, 130, 246, 0.9);
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.wp-content a:hover {
+  color: rgba(96, 165, 250, 1);
+}
+
+.wp-content ul,
+.wp-content ol {
+  margin-left: 1.5rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.wp-content blockquote {
+  background: rgba(255, 255, 255, 0.1);
+  border-left: 4px solid rgba(59, 130, 246, 0.8);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 1.5rem 0;
+}
+
+.wp-content img {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  max-width: 100%;
+  height: auto;
+}
+
+.wp-content [style] {
+  color: inherit !important; /* override inline color from WordPress */
+}
