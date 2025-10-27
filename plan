@@ -1,424 +1,407 @@
-JS (CodePen)
+Got it! You want to **extend your headless WordPress + Express.js + React project** to automatically fetch **local news about Dortmund** from official sources and render them alongside your WordPress posts. I can outline a solution and provide some starter code.
 
-function Posts() {
-  const [posts, setPosts] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
-  const [selectedPost, setSelectedPost] = React.useState(null);
-
-  React.useEffect(() => {
-    fetchPosts();
-  }, []);
-
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch("https://example.com/api/posts"); // Change to your real API
-      if (!res.ok) throw new Error("Failed to load posts");
-      const data = await res.json();
-      setPosts(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="center">
-        <div className="loader"></div>
-        <p>Loading posts...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="center">
-        <p className="error">⚠️ {error}</p>
-        <button onClick={fetchPosts}>Try again</button>
-      </div>
-    );
-  }
-
-  if (selectedPost) {
-    return (
-      <div className="post-container">
-        <button className="back-btn" onClick={() => setSelectedPost(null)}>← Back</button>
-        <h1 dangerouslySetInnerHTML={{ __html: selectedPost.title.rendered }} />
-        <p className="date">{new Date(selectedPost.date).toLocaleDateString()}</p>
-        <div
-          className="post-content"
-          dangerouslySetInnerHTML={{ __html: selectedPost.content.rendered }}
-        />
-      </div>
-    );
-  }
-
-  return (
-    <div className="posts">
-      <h1>Our Blog</h1>
-      <p className="subtitle">Latest posts and updates</p>
-
-      {posts.length === 0 ? (
-        <p>No posts found.</p>
-      ) : (
-        posts.map((post) => (
-          <div
-            key={post.id}
-            className="post-card"
-            onClick={() => setSelectedPost(post)}
-          >
-            <h2 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-            <p className="date">{new Date(post.date).toLocaleDateString()}</p>
-            <div
-              className="excerpt"
-              dangerouslySetInnerHTML={{
-                __html:
-                  post.excerpt.rendered.length > 200
-                    ? post.excerpt.rendered.slice(0, 200) + "..."
-                    : post.excerpt.rendered,
-              }}
-            />
-            <button>Read Full Article</button>
-          </div>
-        ))
-      )}
-    </div>
-  );
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(<Posts />);
-
+Here’s a structured approach:
 
 ---
 
-CSS (CodePen)
+## **1. Identify Sources for Dortmund News**
 
-Paste this into the CSS section:
+You need reliable sources to scrape or fetch news from:
 
-body {
-  font-family: "Inter", sans-serif;
-  background: #f9fafb;
-  margin: 0;
-  padding: 20px;
-  color: #111827;
+* [Dortmund.de News](https://www.dortmund.de/de/leben_in_dortmund/medien/aktuelle_nachrichten/index.html) (official city website)
+* Local newspapers: Ruhr Nachrichten, Westfälische Rundschau
+* RSS feeds if available (easier than scraping HTML)
+
+---
+
+## **2. Backend: Express.js Scraper**
+
+You can create a cron-like task or scheduled function to fetch news periodically.
+
+### **Dependencies**
+
+```bash
+npm install axios cheerio node-cron
+```
+
+### **Example Express.js Scraper Endpoint**
+
+```ts
+import express from "express";
+import axios from "axios";
+import cheerio from "cheerio";
+import cron from "node-cron";
+
+const router = express.Router();
+
+// Example in-memory store
+let dortmundNews: any[] = [];
+
+// Scraper function
+async function fetchDortmundNews() {
+  try {
+    const { data } = await axios.get("https://www.dortmund.de/de/leben_in_dortmund/medien/aktuelle_nachrichten/index.html");
+    const $ = cheerio.load(data);
+    const newsItems: any[] = [];
+
+    $(".news-list-item").each((i, elem) => {
+      const title = $(elem).find(".title").text().trim();
+      const link = $(elem).find("a").attr("href");
+      const date = $(elem).find(".date").text().trim();
+
+      if (title && link) {
+        newsItems.push({ title, link, date });
+      }
+    });
+
+    dortmundNews = newsItems.slice(0, 10); // keep top 10 news
+    console.log("Dortmund news updated:", dortmundNews.length);
+  } catch (err) {
+    console.error("Error fetching Dortmund news:", err);
+  }
 }
 
-.center {
-  text-align: center;
-  margin-top: 100px;
-}
+// Fetch news every 6 hours
+cron.schedule("0 */6 * * *", fetchDortmundNews);
 
-.loader {
-  border: 4px solid #e5e7eb;
-  border-top: 4px solid #3b82f6;
-  border-radius: 50%;
-  width: 36px;
-  height: 36px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 10px;
-}
+// Initial fetch
+fetchDortmundNews();
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+router.get("/dortmund-news", (req, res) => {
+  res.json(dortmundNews);
+});
 
-.error {
-  color: #dc2626;
-  font-weight: bold;
-}
+export default router;
+```
 
-.posts {
-  max-width: 700px;
-  margin: 0 auto;
-}
+---
 
-h1 {
-  text-align: center;
-  margin-bottom: 0.25em;
-}
+## **3. Frontend: React Fetch & Display**
 
-.subtitle {
-  text-align: center;
-  color: #6b7280;
-  margin-bottom: 2em;
-}
+You can create a component similar to your WordPress posts.
 
-.post-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.post-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-}
-
-.post-card h2 {
-  margin-top: 0;
-  color: #111827;
-}
-
-.date {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-bottom: 1em;
-}
-
-.excerpt {
-  color: #374151;
-  line-height: 1.6;
-  margin-bottom: 1em;
-}
-
-.post-card button {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.post-card button:hover {
-  background: #1d4ed8;
-}
-
-.post-container {
-  max-width: 700px;
-  margin: 0 auto;
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-}
-
-.back-btn {
-  display: inline-block;
-  margin-bottom: 20px;
-  background: none;
-  border: none;
-  color: #3b82f6;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.post-content img {
-  max-width: 100%;
-  border-radius: 8px;
-  margin: 1em 0;
-}
-
-.post-content p {
-  line-height: 1.7;
-  color: #374151;
-}
-
-additional variation ,buttons with new styles :
-
+```ts
 import { useEffect, useState } from "react";
 
-interface WordPressPost {
-  id: number;
-  title: { rendered: string };
-  content: { rendered: string };
-  excerpt: { rendered: string };
+interface DortmundNewsItem {
+  title: string;
+  link: string;
   date: string;
-  slug: string;
-  featured_media?: number;
 }
 
-export default function Posts() {
-  const [posts, setPosts] = useState<WordPressPost[]>([]);
-  const [selectedPost, setSelectedPost] = useState<WordPressPost | null>(null);
+export default function DortmundNews() {
+  const [news, setNews] = useState<DortmundNewsItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchPosts();
+    fetch("http://localhost:5000/api/dortmund-news")
+      .then((res) => res.json())
+      .then((data) => setNews(data))
+      .finally(() => setLoading(false));
   }, []);
 
-  const fetchPosts = async () => {
-    setLoading(true);
-    setError(null);
-    setSelectedPost(null);
-
-    try {
-      const res = await fetch("http://localhost:5000/api/posts");
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      const data: WordPressPost[] = await res.json();
-      setPosts(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load posts");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePostClick = (post: WordPressPost) => {
-    setSelectedPost(post);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const handleBackClick = () => setSelectedPost(null);
-
-  if (loading) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-[50vh] text-center">
-        <div className="loader border-4 border-gray-200 border-t-blue-600 rounded-full w-10 h-10 animate-spin mb-3"></div>
-        <p className="text-gray-600">Loading posts...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-16">
-        <p className="text-red-600 font-semibold mb-4">⚠️ {error}</p>
-        <button
-          onClick={fetchPosts}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
-        >
-          Try Again
-        </button>
-      </div>
-    );
-  }
-
-  if (selectedPost) {
-    return (
-      <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8 mt-8">
-        <button
-          onClick={handleBackClick}
-          className="text-blue-600 hover:text-blue-800 font-semibold mb-6 transition-colors"
-        >
-          ← Back
-        </button>
-
-        <h1
-          className="text-3xl font-bold text-gray-900 mb-2"
-          dangerouslySetInnerHTML={{ __html: selectedPost.title.rendered }}
-        />
-        <p className="text-sm text-gray-500 mb-6">
-          {new Date(selectedPost.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
-
-        <div
-          className="prose prose-lg max-w-none text-gray-800"
-          dangerouslySetInnerHTML={{ __html: selectedPost.content.rendered }}
-        />
-      </div>
-    );
-  }
+  if (loading) return <p>Loading Dortmund news...</p>;
+  if (!news.length) return <p>No news found.</p>;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
-      <header className="text-center mb-10">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Our Blog</h1>
-        <p className="text-lg text-gray-600 mb-2">Latest posts and updates</p>
-        {posts.length > 0 && (
-          <p className="text-sm text-gray-500">
-            Showing {posts.length} post{posts.length !== 1 ? "s" : ""}
-          </p>
-        )}
-      </header>
-
-      {posts.length === 0 ? (
-        <p className="text-center text-gray-500 text-lg py-12">
-          No posts found.
-        </p>
-      ) : (
-        <div className="space-y-6">
-          {posts.map((post) => (
-            <article
-              key={post.id}
-              onClick={() => handlePostClick(post)}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 cursor-pointer"
-            >
-              <h2
-                className="text-2xl font-semibold text-gray-900 mb-1 hover:text-blue-600 transition-colors"
-                dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-              />
-              <p className="text-sm text-gray-500 mb-3">
-                {new Date(post.date).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </p>
-
-              <div
-                className="text-gray-700 leading-relaxed mb-4"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    post.excerpt.rendered.length > 200
-                      ? post.excerpt.rendered.slice(0, 200) + "..."
-                      : post.excerpt.rendered,
-                }}
-              />
-
-              {/* Glass Effect Button */}
-              <button
-                className="btn-glass"
-                onClick={() => handlePostClick(post)}
-              >
-                Glass Effect
-              </button>
-            </article>
-          ))}
-        </div>
-      )}
+      <h2 className="text-3xl font-bold mb-6">Top Dortmund News</h2>
+      <ul className="space-y-4">
+        {news.map((item, index) => (
+          <li key={index} className="p-4 border rounded hover:shadow-lg transition-all">
+            <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-semibold">
+              {item.title}
+            </a>
+            <p className="text-sm text-gray-500">{item.date}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
+```
 
-/* Add this CSS globally (e.g., in your globals.css or component-level CSS) */
+---
 
-<style jsx global>{`
-  .btn-glass {
-    padding: 14px 40px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+## **4. Integration Notes**
+
+* You can merge this component with your WordPress posts page.
+* Use the same `AOS` animations if needed.
+* If the source provides RSS feeds, you can simplify the scraper by parsing XML instead of HTML.
+* Consider caching in **MongoDB** instead of in-memory for persistence.
+
+---
+
+If you want, I can **rewrite your existing Posts component** to **include Dortmund news automatically below the WordPress posts**, keeping your AOS animations and “Read Full Article” logic intact. This way, everything shows in one feed.
+
+Do you want me to do that?
+
+
+
+
+version 2 : 
+
+
+
+I'll help you extend your headless WordPress + Express.js project to automatically scrape news from Dortmund's official sources and display them in your React frontend. Here's a complete implementation:
+
+## 1. Backend (Express.js) - News Scraper Service
+
+First, create a news scraping service:
+
+```javascript
+// services/newsScraper.js
+const axios = require('axios');
+const cheerio = require('cheerio');
+
+class DortmundNewsScraper {
+  constructor() {
+    this.sources = [
+      {
+        name: 'Stadt Dortmund',
+        url: 'https://www.dortmund.de/de/leben_in_dortmund/nachrichtenportal/alle_nachrichten/',
+        baseUrl: 'https://www.dortmund.de'
+      },
+      {
+        name: 'Dortmund Official News',
+        url: 'https://www.dortmund.de/de/leben_in_dortmund/nachrichtenportal/',
+        baseUrl: 'https://www.dortmund.de'
+      }
+    ];
   }
 
-  .btn-glass:hover {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-    transform: translateY(-3px);
+  async scrapeAllNews() {
+    const allNews = [];
+    
+    for (const source of this.sources) {
+      try {
+        const news = await this.scrapeSource(source);
+        allNews.push(...news);
+      } catch (error) {
+        console.error(`Error scraping ${source.name}:`, error.message);
+      }
+    }
+
+    // Remove duplicates and sort by date
+    return this.removeDuplicates(allNews).sort((a, b) => 
+      new Date(b.date) - new Date(a.date)
+    );
   }
 
-  .btn-glass:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+  async scrapeSource(source) {
+    const response = await axios.get(source.url);
+    const $ = cheerio.load(response.data);
+    const newsItems = [];
+
+    // Adjust selectors based on the actual website structure
+    $('.news-item, .teaser, article').each((index, element) => {
+      const $element = $(element);
+      
+      const title = $element.find('h2, h3, .title').first().text().trim();
+      const link = $element.find('a').first().attr('href');
+      const description = $element.find('p, .description').first().text().trim();
+      const dateText = $element.find('.date, time').first().text().trim();
+
+      if (title && link) {
+        const fullLink = link.startsWith('http') ? link : source.baseUrl + link;
+        const date = this.parseDate(dateText);
+
+        newsItems.push({
+          title,
+          link: fullLink,
+          description,
+          date: date || new Date(),
+          source: source.name,
+          scrapedAt: new Date()
+        });
+      }
+    });
+
+    return newsItems;
   }
-`}</style>
 
-aos effect to integrate :
+  parseDate(dateText) {
+    if (!dateText) return new Date();
+    
+    // Handle German date formats
+    const date = new Date(dateText);
+    return isNaN(date.getTime()) ? new Date() : date;
+  }
 
-// components/Posts.tsx
+  removeDuplicates(newsItems) {
+    const seen = new Set();
+    return newsItems.filter(item => {
+      const key = `${item.title}-${item.link}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }
+}
+
+module.exports = DortmundNewsScraper;
+```
+
+## 2. Backend Routes for News
+
+Add news routes to your Express.js server:
+
+```javascript
+// routes/news.js
+const express = require('express');
+const router = express.Router();
+const DortmundNewsScraper = require('../services/newsScraper');
+const News = require('../models/News'); // You'll need a News model
+
+const scraper = new DortmundNewsScraper();
+
+// Get all news
+router.get('/news', async (req, res) => {
+  try {
+    const news = await News.find().sort({ date: -1 }).limit(50);
+    res.json(news);
+  } catch (error) {
+    console.error('Error fetching news:', error);
+    res.status(500).json({ error: 'Failed to fetch news' });
+  }
+});
+
+// Manual trigger for scraping
+router.post('/news/scrape', async (req, res) => {
+  try {
+    const newsItems = await scraper.scrapeAllNews();
+    
+    // Save to database
+    for (const item of newsItems) {
+      await News.findOneAndUpdate(
+        { link: item.link },
+        item,
+        { upsert: true, new: true }
+      );
+    }
+
+    res.json({ 
+      message: 'Scraping completed', 
+      count: newsItems.length 
+    });
+  } catch (error) {
+    console.error('Error scraping news:', error);
+    res.status(500).json({ error: 'Scraping failed' });
+  }
+});
+
+module.exports = router;
+```
+
+## 3. Database Model for News
+
+Create a MongoDB model for news:
+
+```javascript
+// models/News.js
+const mongoose = require('mongoose');
+
+const newsSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true
+  },
+  link: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  description: String,
+  date: {
+    type: Date,
+    required: true
+  },
+  source: {
+    type: String,
+    required: true
+  },
+  scrapedAt: {
+    type: Date,
+    default: Date.now
+  }
+}, {
+  timestamps: true
+});
+
+module.exports = mongoose.model('News', newsSchema);
+```
+
+## 4. Automated Scraping Scheduler
+
+Add a scheduler to automatically scrape news:
+
+```javascript
+// services/scheduler.js
+const cron = require('node-cron');
+const DortmundNewsScraper = require('./newsScraper');
+const News = require('../models/News');
+
+class NewsScheduler {
+  constructor() {
+    this.scraper = new DortmundNewsScraper();
+  }
+
+  start() {
+    // Scrape every 6 hours
+    cron.schedule('0 */6 * * *', async () => {
+      console.log('Running automated news scrape...');
+      await this.scrapeAndSave();
+    });
+
+    // Also run immediately on startup
+    setTimeout(() => this.scrapeAndSave(), 5000);
+  }
+
+  async scrapeAndSave() {
+    try {
+      const newsItems = await this.scraper.scrapeAllNews();
+      let savedCount = 0;
+
+      for (const item of newsItems) {
+        try {
+          await News.findOneAndUpdate(
+            { link: item.link },
+            item,
+            { upsert: true, new: true }
+          );
+          savedCount++;
+        } catch (error) {
+          console.error('Error saving news item:', error);
+        }
+      }
+
+      console.log(`News scraping completed. Processed ${savedCount} items.`);
+    } catch (error) {
+      console.error('Error in automated scraping:', error);
+    }
+  }
+}
+
+module.exports = NewsScheduler;
+```
+
+Initialize the scheduler in your main server file:
+
+```javascript
+// server.js or app.js
+const NewsScheduler = require('./services/scheduler');
+
+// Add after your other middleware
+const newsScheduler = new NewsScheduler();
+newsScheduler.start();
+```
+
+## 5. Updated React Component
+
+Now update your React component to display both WordPress posts and Dortmund news:
+
+```typescript
+// components/PostsWithNews.tsx
 import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -431,58 +414,88 @@ interface WordPressPost {
   date: string;
   slug: string;
   featured_media?: number;
+  type: 'wordpress';
 }
 
-export default function Posts() {
-  const [posts, setPosts] = useState<WordPressPost[]>([]);
-  const [selectedPost, setSelectedPost] = useState<WordPressPost | null>(null);
+interface DortmundNews {
+  id: string;
+  title: string;
+  description: string;
+  link: string;
+  date: string;
+  source: string;
+  scrapedAt: string;
+  type: 'news';
+}
+
+type ContentItem = WordPressPost | DortmundNews;
+
+export default function PostsWithNews() {
+  const [content, setContent] = useState<ContentItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'all' | 'posts' | 'news'>('all');
 
   useEffect(() => {
-    // Initialize AOS on component mount
-    AOS.init({
-      duration: 1000, // default animation duration
-      once: true,     // animate only once
-    });
-
-    fetchPosts();
+    fetchContent();
+    AOS.init({ duration: 1000, once: true });
   }, []);
 
   useEffect(() => {
-    // Refresh AOS animations after posts are loaded
     AOS.refresh();
-  }, [posts, selectedPost]);
+  }, [content, selectedItem]);
 
-  const fetchPosts = async () => {
+  const fetchContent = async () => {
     setLoading(true);
     setError(null);
-    setSelectedPost(null);
+    setSelectedItem(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/posts");
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-      const data: WordPressPost[] = await res.json();
-      setPosts(data);
+      const [postsResponse, newsResponse] = await Promise.all([
+        fetch("http://localhost:5000/api/posts"),
+        fetch("http://localhost:5000/api/news")
+      ]);
+
+      if (!postsResponse.ok) throw new Error(`Posts API error! status: ${postsResponse.status}`);
+      if (!newsResponse.ok) throw new Error(`News API error! status: ${newsResponse.status}`);
+
+      const posts: WordPressPost[] = await postsResponse.json();
+      const news: DortmundNews[] = await newsResponse.json();
+
+      // Combine and sort by date
+      const combined = [
+        ...posts.map(post => ({ ...post, type: 'wordpress' as const })),
+        ...news.map(item => ({ ...item, type: 'news' as const, id: item.link }))
+      ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+      setContent(combined);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load posts");
+      setError(err instanceof Error ? err.message : "Failed to load content");
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePostClick = (post: WordPressPost) => {
-    setSelectedPost(post);
+  const handleItemClick = (item: ContentItem) => {
+    setSelectedItem(item);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleBackClick = () => setSelectedPost(null);
+  const handleBackClick = () => setSelectedItem(null);
+
+  const filteredContent = content.filter(item => {
+    if (activeTab === 'all') return true;
+    if (activeTab === 'posts') return item.type === 'wordpress';
+    if (activeTab === 'news') return item.type === 'news';
+    return true;
+  });
 
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-[50vh] text-center" data-aos="fade-up">
         <div className="loader mb-3"></div>
-        <p className="text-gray-600">Loading posts...</p>
+        <p className="text-gray-600">Loading content...</p>
       </div>
     );
   }
@@ -491,38 +504,71 @@ export default function Posts() {
     return (
       <div className="text-center py-16" data-aos="fade-up">
         <p className="text-red-400 font-semibold mb-4">⚠️ {error}</p>
-        <button onClick={fetchPosts} className="btn-glass">
+        <button onClick={fetchContent} className="btn-glass">
           Try Again
         </button>
       </div>
     );
   }
 
-  if (selectedPost) {
+  if (selectedItem) {
     return (
       <div className="max-w-3xl mx-auto post-card mt-8" data-aos="fade-up">
         <button onClick={handleBackClick} className="btn-glass mb-6">
-          ← Back to Posts
+          ← Back to {selectedItem.type === 'wordpress' ? 'Posts' : 'News'}
         </button>
 
-        <h1
-          className="text-3xl font-bold text-gray-900 mb-2"
-          dangerouslySetInnerHTML={{ __html: selectedPost.title.rendered }}
-          data-aos="fade-right"
-        />
-        <p className="text-sm text-gray-500 mb-6" data-aos="fade-left">
-          {new Date(selectedPost.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
-
-        <div
-          className="prose prose-lg max-w-none text-gray-800"
-          dangerouslySetInnerHTML={{ __html: selectedPost.content.rendered }}
-          data-aos="fade-up"
-        />
+        {selectedItem.type === 'wordpress' ? (
+          <>
+            <h1
+              className="text-3xl font-bold text-gray-900 mb-2"
+              dangerouslySetInnerHTML={{ __html: selectedItem.title.rendered }}
+            />
+            <p className="text-sm text-gray-500 mb-6">
+              {new Date(selectedItem.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <div
+              className="prose prose-lg max-w-none text-gray-800"
+              dangerouslySetInnerHTML={{ __html: selectedItem.content.rendered }}
+            />
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                {selectedItem.source}
+              </span>
+              <span className="text-xs text-gray-500">
+                Scraped: {new Date(selectedItem.scrapedAt).toLocaleDateString()}
+              </span>
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {selectedItem.title}
+            </h1>
+            <p className="text-sm text-gray-500 mb-6">
+              {new Date(selectedItem.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <div className="prose prose-lg max-w-none text-gray-800">
+              <p className="mb-4">{selectedItem.description}</p>
+              <a 
+                href={selectedItem.link} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="btn-glass inline-block"
+              >
+                Read Original Article
+              </a>
+            </div>
+          </>
+        )}
       </div>
     );
   }
@@ -530,38 +576,69 @@ export default function Posts() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
       <header className="text-center mb-10" data-aos="fade-down">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Our Blog</h1>
-        <p className="text-lg text-gray-600 mb-2">Latest posts and updates</p>
-        {posts.length > 0 && (
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Dortmund News & Blog</h1>
+        <p className="text-lg text-gray-600 mb-4">Latest posts and official news from Dortmund</p>
+        
+        {/* Tab Navigation */}
+        <div className="flex justify-center gap-4 mb-6">
+          {(['all', 'posts', 'news'] as const).map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === tab 
+                  ? 'bg-blue-500 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {tab === 'all' && 'All Content'}
+              {tab === 'posts' && 'Blog Posts'}
+              {tab === 'news' && 'Dortmund News'}
+            </button>
+          ))}
+        </div>
+
+        {filteredContent.length > 0 && (
           <p className="text-sm text-gray-500">
-            Showing {posts.length} post{posts.length !== 1 ? "s" : ""}
+            Showing {filteredContent.length} item{filteredContent.length !== 1 ? 's' : ''}
           </p>
         )}
       </header>
 
-      {posts.length === 0 ? (
+      {filteredContent.length === 0 ? (
         <div className="text-center py-12" data-aos="fade-up">
-          <p className="text-gray-500 text-lg mb-4">No posts found.</p>
-          <button onClick={fetchPosts} className="btn-glass">
-            Refresh Posts
+          <p className="text-gray-500 text-lg mb-4">No content found.</p>
+          <button onClick={fetchContent} className="btn-glass">
+            Refresh Content
           </button>
         </div>
       ) : (
         <div className="space-y-6">
-          {posts.map((post) => (
+          {filteredContent.map((item, index) => (
             <article
-              key={post.id}
+              key={item.type === 'wordpress' ? `post-${item.id}` : `news-${item.id}`}
               className="post-card hover:shadow-xl transition-all duration-300"
-              data-aos="fade-up"
-              data-aos-delay="100"
+              data-aos={index % 2 === 0 ? "fade-up" : "fade-right"}
             >
+              {item.type === 'news' && (
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                    {item.source}
+                  </span>
+                  <span className="text-xs text-gray-500">News</span>
+                </div>
+              )}
+
               <h2
                 className="text-2xl font-semibold text-gray-900 mb-1 hover:text-blue-400 transition-colors cursor-pointer"
-                onClick={() => handlePostClick(post)}
-                dangerouslySetInnerHTML={{ __html: post.title.rendered }}
+                onClick={() => handleItemClick(item)}
+                dangerouslySetInnerHTML={{ 
+                  __html: item.type === 'wordpress' ? item.title.rendered : item.title 
+                }}
               />
+              
               <p className="text-sm text-gray-500 mb-3">
-                {new Date(post.date).toLocaleDateString("en-US", {
+                {new Date(item.date).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -571,18 +648,21 @@ export default function Posts() {
               <div
                 className="text-gray-700 leading-relaxed mb-4"
                 dangerouslySetInnerHTML={{
-                  __html:
-                    post.excerpt.rendered.length > 200
-                      ? post.excerpt.rendered.slice(0, 200) + "..."
-                      : post.excerpt.rendered,
+                  __html: item.type === 'wordpress' 
+                    ? (item.excerpt.rendered.length > 200 
+                        ? item.excerpt.rendered.slice(0, 200) + "..." 
+                        : item.excerpt.rendered)
+                    : (item.description.length > 200 
+                        ? item.description.slice(0, 200) + "..." 
+                        : item.description)
                 }}
               />
 
               <button 
-                onClick={() => handlePostClick(post)}
+                onClick={() => handleItemClick(item)}
                 className="btn-glass"
               >
-                Read Full Article
+                {item.type === 'wordpress' ? 'Read Full Article' : 'Read More'}
               </button>
             </article>
           ))}
@@ -591,6 +671,40 @@ export default function Posts() {
     </div>
   );
 }
+```
 
+## 6. Required Dependencies
 
+Install the required packages:
 
+```bash
+npm install axios cheerio node-cron
+```
+
+## 7. Environment Configuration
+
+Add to your `.env` file:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+SCRAPE_INTERVAL=6
+```
+
+## Key Features:
+
+1. **Automated Scraping**: Runs every 6 hours and on server startup
+2. **Multiple Sources**: Can scrape from multiple Dortmund news sources
+3. **Duplicate Prevention**: Uses URL-based deduplication
+4. **Mixed Content**: Combines WordPress posts and scraped news
+5. **Tab Filtering**: Users can filter between posts, news, or all content
+6. **Error Handling**: Robust error handling for scraping failures
+7. **Type Safety**: Full TypeScript support
+
+## Usage:
+
+1. The scraper automatically runs every 6 hours
+2. You can manually trigger scraping via POST `/api/news/scrape`
+3. News is stored in MongoDB and served via GET `/api/news`
+4. React component displays both WordPress posts and Dortmund news
+
+This implementation provides a complete automated system for fetching and displaying Dortmund news alongside your existing WordPress content.
