@@ -34,7 +34,7 @@ app.get("/api/news", async (req, res) => {
       {
         id: "news-1",
         title: "Dortmund City Development News",
-        link: "https://www.dortmund.de/en/news",
+        link: "https://www.bild.de/regional/dortmund/home-tEfE9FBcspDqbA9qV8Aj",
         description: "Latest urban development updates from Dortmund city administration. New infrastructure projects and community initiatives.",
         date: new Date().toISOString(),
         source: "Stadt Dortmund",
@@ -43,7 +43,7 @@ app.get("/api/news", async (req, res) => {
       {
         id: "news-2", 
         title: "Urban Planning Committee Decisions",
-        link: "https://www.dortmund.de/en/urban-development",
+        link: "https://www.ruhrnachrichten.de/dortmund/",
         description: "Recent urban planning committee meeting results affecting Dortmund's city development and public spaces.",
         date: new Date(Date.now() - 2 * 86400000).toISOString(),
         source: "Dortmund City Council",
