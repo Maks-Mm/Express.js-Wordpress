@@ -67,6 +67,28 @@ export default function Posts() {
   const wpCount = content.filter(item => item.type === 'wp').length;
   const newsCount = content.filter(item => item.type === 'news').length;
 
+  // Define tabConfig once at the component level
+  const tabConfig = [
+    { 
+      key: 'all' as const, 
+      label: 'All', 
+      count: content.length,
+      icon: '📚'
+    },
+    { 
+      key: 'posts' as const, 
+      label: 'Posts', 
+      count: wpCount,
+      icon: '✍️'
+    },
+    { 
+      key: 'news' as const, 
+      label: 'News', 
+      count: newsCount,
+      icon: '⚽'
+    }
+  ];
+
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-[50vh] text-center" data-aos="fade-up">
@@ -157,58 +179,34 @@ export default function Posts() {
         )}
       </header>
 
-     {/* Tab Navigation - No Container */}
-<div className="flex justify-center mb-8">
-  {[
-    { 
-      key: 'all' as const, 
-      label: 'All', 
-      count: content.length,
-      icon: '📚'
-    },
-    { 
-      key: 'posts' as const, 
-      label: 'Posts', 
-      count: wpCount,
-      icon: '✍️'
-    },
-    { 
-      key: 'news' as const, 
-      label: 'News', 
-      count: newsCount,
-      icon: '⚽'
-    }
-  ].map(tab => (
-    <button
-      key={tab.key}
-      onClick={() => setActiveTab(tab.key)}
-      className={`
-        px-4 py-3 rounded-xl text-sm font-medium mx-2
-        flex items-center gap-2 transition-all duration-300
-        backdrop-blur-md border min-w-[90px]
-        ${activeTab === tab.key
-          ? 'bg-white/20 text-white border-white/40 shadow-lg transform scale-105'
-          : 'bg-white/10 text-white/80 border-white/20 hover:bg-white/15 hover:border-white/30'
-        }
-      `}
-      style={{
-        background: 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 4px 20px rgba(255, 255, 255, 0.1)'
-      }}
-    >
-      <span className="text-base">{tab.icon}</span>
-      <div className="flex flex-col items-start">
-        <span className="text-xs font-semibold whitespace-nowrap">{tab.label}</span>
-        <span className="text-xs font-bold mt-0.5 text-white/70">
-          {tab.count} items
-        </span>
+      {/* Tab Navigation - Using tabConfig */}
+      <div className="flex justify-center mb-8">
+        {tabConfig.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
+            aria-selected={activeTab === tab.key}
+            role="tab"
+            className={`
+              px-4 py-3 rounded-xl text-sm font-medium mx-2
+              flex items-center gap-2 transition-all duration-300
+              backdrop-blur-md border min-w-[90px]
+              ${activeTab === tab.key
+                ? 'bg-white/20 text-white border-white/40 shadow-lg transform scale-105'
+                : 'bg-white/10 text-white/80 border-white/20 hover:bg-white/15 hover:border-white/30'
+              }
+            `}
+          >
+            <span className="text-base">{tab.icon}</span>
+            <div className="flex flex-col items-start">
+              <span className="text-xs font-semibold whitespace-nowrap">{tab.label}</span>
+              <span className="text-xs font-bold mt-0.5 text-white/70">
+                {tab.count} items
+              </span>
+            </div>
+          </button>
+        ))}
       </div>
-    </button>
-  ))}
-</div>
 
       {filteredContent.length === 0 ? (
         <div className="text-center py-12" data-aos="fade-up">
