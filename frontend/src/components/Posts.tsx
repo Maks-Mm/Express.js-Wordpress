@@ -270,6 +270,7 @@ export default function Posts() {
 
       {/* MongoDB News Section with Special Header */}
       {newsContent.length > 0 && (
+        //*the info cards are to remake ,styles ,objects ... */
         <section className="mb-12" data-aos="fade-up">
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 mb-6 text-white">
             <div className="flex items-center gap-3 mb-2">
