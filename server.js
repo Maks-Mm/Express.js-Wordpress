@@ -1,12 +1,52 @@
 import express from "express";
 import axios from "axios";
 import cors from "cors";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import News from "./wp-backend/models/News.js";
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const WP_API = "https://public-api.wordpress.com/wp/v2/sites/firstproduc.wordpress.com";
+
+const { MONGODB_URI, MONGODB_DB_NAME } = process.env;
+
+mongoose
+  .connect(MONGODB_URI, {
+    dbName: MONGODB_DB_NAME,
+  })
+  .then(() => console.log("✅ Connected to MongoDB Atlas"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+
+
+app.post("/api/mongo/news", async (req, res) => {
+  try {
+    const { title, description, content, link, date, source } = req.body;
+    const newItem = new News({ title, description, content, link, date, source });
+    await newItem.save();
+    res.status(201).json(newItem);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 📥 Get all MongoDB news
+app.get("/api/mongo/news", async (req, res) => {
+  try {
+    const mongoNews = await News.find().sort({ date: -1 }).lean();
+    res.json(mongoNews);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
 
 // ✅ Your existing WordPress posts endpoint (KEEP THIS - it works)
 app.get("/api/posts", async (req, res) => {
@@ -72,57 +112,68 @@ app.get("/api/news", async (req, res) => {
 
 // ✅ NEW: Combined content endpoint - FIXED VERSION
 app.get("/api/content", async (req, res) => {
-  console.log("🔄 Fetching combined posts and news...");
+  console.log("🔄 Fetching combined posts, static news, and MongoDB content...");
+
   try {
-    // Fetch both WordPress posts and Dortmund news in parallel
-    const [postsResponse, newsResponse] = await Promise.all([
+    const [postsResponse, newsResponse, mongoNews] = await Promise.all([
       axios.get(`http://localhost:5000/api/posts`).catch(err => {
         console.error("WordPress posts fetch failed:", err.message);
         return { data: [] };
       }),
       axios.get(`http://localhost:5000/api/news`).catch(err => {
-        console.error("News fetch failed:", err.message);
+        console.error("Static news fetch failed:", err.message);
         return { data: [] };
+      }),
+      News.find().sort({ date: -1 }).lean().catch(err => {
+        console.error("MongoDB fetch failed:", err.message);
+        return [];
       })
     ]);
 
-    console.log(`📊 WordPress posts: ${postsResponse.data.length}`);
-    console.log(`📊 Dortmund news: ${newsResponse.data.length}`);
-
-    // Format WordPress posts (add type)
     const posts = postsResponse.data.map(post => ({
       ...post,
-      type: 'wp',
-      id: `wp-${post.id}`
+      type: "wp",
+      id: `wp-${post.id}`,
     }));
 
-    // Format news items to match WordPress structure
-    const news = newsResponse.data.map(item => ({
+    const staticNews = newsResponse.data.map(item => ({
       ...item,
-      type: 'news',
-      // Convert news format to match WordPress post structure
+      type: "news",
       title: { rendered: item.title },
-      excerpt: { rendered: item.description || '' },
-      content: { rendered: item.description || '' },
+      excerpt: { rendered: item.description || "" },
+      content: { rendered: item.description || "" },
       date: item.date,
-      slug: item.id
+      slug: item.id,
     }));
 
-    // Combine and sort by date (newest first)
-    const combined = [...posts, ...news].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
+    const mongoFormatted = mongoNews.map((item) => ({
+      ...item,
+      id: `mongo-${item._id}`,
+      title: { rendered: item.title },
+      excerpt: { rendered: item.description || item.content?.slice(0, 150) || "" },
+      content: { rendered: item.content || item.description || "" },
+      date: item.date || new Date().toISOString(),
+      source: item.source || "MongoDB Feed",
+      type: "news",
+    }));
+
+    const combined = [...posts, ...staticNews, ...mongoFormatted].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
-    console.log(`✅ Combined total: ${combined.length} items (${posts.length} posts + ${news.length} news)`);
+    console.log(
+      `✅ Combined total: ${combined.length} items (${posts.length} WP + ${staticNews.length} static + ${mongoFormatted.length} Mongo)`
+    );
     res.json(combined);
   } catch (err) {
     console.error("❌ Error fetching combined content:", err.message);
     res.status(500).json({
-      error: "Failed to fetch content",
-      details: err.message
+      error: "Failed to fetch combined content",
+      details: err.message,
     });
   }
 });
+
 
 // ✅ Health check endpoint
 app.get("/api/health", (req, res) => {

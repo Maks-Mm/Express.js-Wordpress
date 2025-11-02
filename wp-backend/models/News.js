@@ -1,3 +1,5 @@
+//wp-backend/models/News.js
+
 import { Schema, model } from 'mongoose';
 
 const newsSchema = new Schema({
