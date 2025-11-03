@@ -1,3 +1,4 @@
+// wp-backend/routes/news.js
 import express from 'express';
 import DortmundNewsScraper from '../services/newsScraper.js';
 import News from '../models/News.js';

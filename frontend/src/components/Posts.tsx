@@ -76,22 +76,22 @@ export default function Posts() {
   const newsCount = newsContent.length;
 
   const tabConfig = [
-    { 
-      key: 'all' as const, 
-      label: 'All', 
+    {
+      key: 'all' as const,
+      label: 'All',
       count: content.length,
       icon: '📚'
     },
-    { 
-      key: 'posts' as const, 
-      label: 'Stable Content', 
+    {
+      key: 'posts' as const,
+      label: 'Stable Content',
       count: wpCount,
       icon: '🏛️',
       description: 'WordPress Foundation'
     },
-    { 
-      key: 'news' as const, 
-      label: 'Live Updates', 
+    {
+      key: 'news' as const,
+      label: 'Live Updates',
       count: newsCount,
       icon: '⚡',
       description: 'MongoDB Stream'
@@ -120,7 +120,7 @@ export default function Posts() {
 
   if (selectedItem) {
     const isNews = selectedItem.type === 'news';
-    
+
     return (
       <div className="max-w-3xl mx-auto post-card mt-8" data-aos="fade-up">
         <button onClick={handleBackClick} className="btn-glass mb-6">
@@ -156,9 +156,9 @@ export default function Posts() {
               className="text-gray-700 leading-relaxed mb-6"
               dangerouslySetInnerHTML={{ __html: selectedItem.content.rendered }}
             />
-            <a 
-              href={selectedItem.link} 
-              target="_blank" 
+            <a
+              href={selectedItem.link}
+              target="_blank"
               rel="noopener noreferrer"
               className="btn-glass inline-flex items-center gap-2"
             >
@@ -183,7 +183,7 @@ export default function Posts() {
         <p className="text-lg text-gray-600 mb-4">
           Your gateway to BVB news and tech insights
         </p>
-        
+
         {/* Tech Stack Badge */}
         <div className="inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white text-sm font-medium mb-6">
           <span className="flex items-center gap-1">
@@ -233,7 +233,7 @@ export default function Posts() {
                 <div className="bg-blue-50 px-3 py-1 rounded-r-full text-xs text-blue-700 font-medium mb-3 inline-block">
                   Foundation Post
                 </div>
-                
+
                 <h2
                   className="text-xl font-semibold text-gray-900 mb-2 hover:text-blue-600 transition-colors cursor-pointer"
                   onClick={() => handleItemClick(item)}
@@ -250,7 +250,7 @@ export default function Posts() {
                 <div
                   className="text-gray-700 leading-relaxed mb-4 text-sm"
                   dangerouslySetInnerHTML={{
-                    __html: item.excerpt.rendered.length > 150 
+                    __html: item.excerpt.rendered.length > 150
                       ? item.excerpt.rendered.slice(0, 150) + "..."
                       : item.excerpt.rendered,
                   }}
@@ -328,7 +328,7 @@ export default function Posts() {
                 <div
                   className="text-gray-700 leading-relaxed mb-4 text-sm"
                   dangerouslySetInnerHTML={{
-                    __html: item.excerpt.rendered.length > 120 
+                    __html: item.excerpt.rendered.length > 120
                       ? item.excerpt.rendered.slice(0, 120) + "..."
                       : item.excerpt.rendered,
                   }}
@@ -342,9 +342,9 @@ export default function Posts() {
                     Read Live Update
                   </button>
                   {item.link && (
-                    <a 
-                      href={item.link} 
-                      target="_blank" 
+                    <a
+                      href={item.link}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm text-gray-500 hover:text-green-600 transition-colors"
                     >
@@ -361,29 +361,31 @@ export default function Posts() {
       {/* Tab Navigation for All Content */}
       <div className="flex justify-center mb-8">
         {tabConfig.map(tab => (
+
           <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            aria-selected={activeTab === tab.key}
-            role="tab"
-            className={`
-              px-4 py-3 rounded-xl text-sm font-medium mx-2
-              flex items-center gap-2 transition-all duration-300
-              backdrop-blur-md border min-w-[110px]
-              ${activeTab === tab.key
-                ? 'bg-white/20 text-white border-white/40 shadow-lg transform scale-105'
-                : 'bg-white/10 text-white/80 border-white/20 hover:bg-white/15 hover:border-white/30'
-              }
-            `}
+            style={{
+              color: 'white',
+              backgroundColor: 'transparent', // forces fully transparent
+              backdropFilter: 'none', // remove blur effect if applied
+              boxShadow: activeTab === tab.key ? '0 8px 16px rgba(255,255,255,0.2)' : 'none',
+            }}
+            className={`px-4 py-3 rounded-xl text-sm font-medium mx-2
+    flex items-center gap-2 transition-all duration-300
+    border min-w-[110px]
+    border-white/30
+    ${activeTab === tab.key ? '' : 'hover:bg-white/10 hover:border-white/50'}
+  `}
           >
-            <span className="text-base">{tab.icon}</span>
+
+
+            <span className="text-base !text-white">{tab.icon}</span>
             <div className="flex flex-col items-start">
-              <span className="text-xs font-semibold whitespace-nowrap">{tab.label}</span>
-              <span className="text-xs font-bold mt-0.5 text-white/70">
+              <span className="text-xs font-semibold whitespace-nowrap !text-white">{tab.label}</span>
+              <span className="text-xs font-bold mt-0.5 !text-white">
                 {tab.count} {tab.description ? '' : 'items'}
               </span>
               {tab.description && (
-                <span className="text-[10px] text-white/60 mt-0.5">
+                <span className="text-[10px] mt-0.5 !text-white">
                   {tab.description}
                 </span>
               )}
@@ -391,6 +393,8 @@ export default function Posts() {
           </button>
         ))}
       </div>
+
+
 
       {/* Additional WordPress Posts */}
       {remainingWpPosts.length > 0 && activeTab !== 'news' && (
@@ -426,7 +430,7 @@ export default function Posts() {
                     <div
                       className="text-gray-600 leading-relaxed text-sm mb-3"
                       dangerouslySetInnerHTML={{
-                        __html: item.excerpt.rendered.length > 100 
+                        __html: item.excerpt.rendered.length > 100
                           ? item.excerpt.rendered.slice(0, 100) + "..."
                           : item.excerpt.rendered,
                       }}
