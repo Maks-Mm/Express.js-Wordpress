@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import EnhancedFilter from "../components/EnhancedFilter";
 
 interface ContentItem {
   id: string;
@@ -200,6 +201,14 @@ export default function Posts() {
         )}
       </header>
 
+      {/* REPLACE the old tab navigation with EnhancedFilter */}
+      <EnhancedFilter
+        tabs={tabConfig}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        showSearch={true}
+      />
+
       {/* Main WordPress Posts Section */}
       {topWpPosts.length > 0 && (
         <section className="mb-12" data-aos="fade-up">
@@ -358,8 +367,7 @@ export default function Posts() {
         </section>
       )}
 
-      {/* Tab Navigation for All Content */}
-      <div className="flex justify-center mb-8">
+      {/* Tab Navigation for All Content <div className="flex justify-center mb-8">
         {tabConfig.map(tab => (
 
           <button
@@ -392,7 +400,9 @@ export default function Posts() {
             </div>
           </button>
         ))}
-      </div>
+      </div>*/}
+
+
 
 
 
