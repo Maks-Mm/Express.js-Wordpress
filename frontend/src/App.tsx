@@ -1,5 +1,7 @@
-// App.tsx
+
+// frontend/src/App.tsx
 import './App.css';
+import './styles/wordpress.css'; // Add this import
 import Posts from './components/Posts';
 import AnimatedBackground from './components/AnimatedBackground';
 

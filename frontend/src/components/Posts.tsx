@@ -16,6 +16,27 @@ interface ContentItem {
   source?: string;
 }
 
+// Content Error Boundary Component
+const ContentErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const handleError = () => setHasError(true);
+    window.addEventListener('error', handleError);
+    return () => window.removeEventListener('error', handleError);
+  }, []);
+
+  if (hasError) {
+    return (
+      <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p className="text-red-800">There was an error displaying this content.</p>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
+
 export default function Posts() {
   const [content, setContent] = useState<ContentItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
@@ -48,6 +69,16 @@ export default function Posts() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Enhanced content rendering with sanitization
+  const renderContent = (content: { rendered: string }) => {
+    // Basic sanitization and formatting
+    const cleanContent = content.rendered
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
+      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, ''); // Remove styles
+
+    return { __html: cleanContent };
   };
 
   const handleItemClick = (item: ContentItem) => {
@@ -152,25 +183,29 @@ export default function Posts() {
         </p>
 
         {isNews ? (
-          <div className="wp-content prose prose-lg max-w-none">
-            <div
-              className="text-gray-700 leading-relaxed mb-6"
-              dangerouslySetInnerHTML={{ __html: selectedItem.content.rendered }}
-            />
-            <a
-              href={selectedItem.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-glass inline-flex items-center gap-2"
-            >
-              Read Full Article ↗
-            </a>
-          </div>
+          <ContentErrorBoundary>
+            <div className="wp-content prose prose-lg max-w-none">
+              <div
+                className="text-gray-700 leading-relaxed mb-6"
+                dangerouslySetInnerHTML={renderContent(selectedItem.content)}
+              />
+              <a
+                href={selectedItem.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-glass inline-flex items-center gap-2"
+              >
+                Read Full Article ↗
+              </a>
+            </div>
+          </ContentErrorBoundary>
         ) : (
-          <div
-            className="wp-content prose prose-lg max-w-none"
-            dangerouslySetInnerHTML={{ __html: selectedItem.content.rendered }}
-          />
+          <ContentErrorBoundary>
+            <div
+              className="wp-content prose prose-lg max-w-none"
+              dangerouslySetInnerHTML={renderContent(selectedItem.content)}
+            />
+          </ContentErrorBoundary>
         )}
       </div>
     );
@@ -195,13 +230,28 @@ export default function Posts() {
         </div>
 
         {content.length > 0 && (
-          <p className="text-sm text-gray-500">
-            {filteredContent.length} items loaded • {wpCount} stable posts • {newsCount} live updates
-          </p>
+          <>
+            <p className="text-sm text-gray-500">
+              {filteredContent.length} items loaded • {wpCount} stable posts • {newsCount} live updates
+            </p>
+
+            {/* Enhanced Debug section */}
+            <div className="text-xs text-gray-400 mt-2 p-2 bg-gray-50 rounded">
+              <div><strong>Debug:</strong> {wpContent.length} WP posts | {newsContent.length} News items</div>
+              <div className="mt-1">
+                <strong>WP Titles:</strong> {wpContent.map(p => p.title.rendered).join(', ')}
+              </div>
+              <div className="mt-1">
+                <strong>News Titles:</strong> {newsContent.map(p => p.title.rendered).join(', ')}
+              </div>
+            </div>
+          </>
         )}
       </header>
 
-      {/* REPLACE the old tab navigation with EnhancedFilter */}
+      {/* Rest of your component remains the same... */}
+
+      {/* Enhanced Filter Component */}
       <EnhancedFilter
         tabs={tabConfig}
         activeTab={activeTab}
@@ -210,7 +260,7 @@ export default function Posts() {
       />
 
       {/* Main WordPress Posts Section */}
-      {topWpPosts.length > 0 && (
+      {topWpPosts.length > 0 && activeTab !== 'news' && (
         <section className="mb-12" data-aos="fade-up">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -278,8 +328,7 @@ export default function Posts() {
       )}
 
       {/* MongoDB News Section with Special Header */}
-      {newsContent.length > 0 && (
-        //*the info cards are to remake ,styles ,objects ... */
+      {newsContent.length > 0 && activeTab !== 'posts' && (
         <section className="mb-12" data-aos="fade-up">
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 mb-6 text-white">
             <div className="flex items-center gap-3 mb-2">
@@ -366,45 +415,6 @@ export default function Posts() {
           </div>
         </section>
       )}
-
-      {/* Tab Navigation for All Content <div className="flex justify-center mb-8">
-        {tabConfig.map(tab => (
-
-          <button
-            style={{
-              color: 'white',
-              backgroundColor: 'transparent', // forces fully transparent
-              backdropFilter: 'none', // remove blur effect if applied
-              boxShadow: activeTab === tab.key ? '0 8px 16px rgba(255,255,255,0.2)' : 'none',
-            }}
-            className={`px-4 py-3 rounded-xl text-sm font-medium mx-2
-    flex items-center gap-2 transition-all duration-300
-    border min-w-[110px]
-    border-white/30
-    ${activeTab === tab.key ? '' : 'hover:bg-white/10 hover:border-white/50'}
-  `}
-          >
-
-
-            <span className="text-base !text-white">{tab.icon}</span>
-            <div className="flex flex-col items-start">
-              <span className="text-xs font-semibold whitespace-nowrap !text-white">{tab.label}</span>
-              <span className="text-xs font-bold mt-0.5 !text-white">
-                {tab.count} {tab.description ? '' : 'items'}
-              </span>
-              {tab.description && (
-                <span className="text-[10px] mt-0.5 !text-white">
-                  {tab.description}
-                </span>
-              )}
-            </div>
-          </button>
-        ))}
-      </div>*/}
-
-
-
-
 
       {/* Additional WordPress Posts */}
       {remainingWpPosts.length > 0 && activeTab !== 'news' && (
