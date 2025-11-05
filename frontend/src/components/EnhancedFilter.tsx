@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect } from "react";
+import './EnhancedFilter.css';
 
 interface FilterTab {
   key: 'all' | 'posts' | 'news';
@@ -60,53 +61,40 @@ export default function EnhancedFilter({
     (isExpanded ? filteredTabs : filteredTabs.slice(0, startLength));
 
   return (
-    <div className="w-full max-w-4xl mx-auto mb-8">
+    <div className="enhanced-filter-container w-full">
       {/* Search Input - Borrowed from example */}
       {showSearch && (
-        <div className="mb-6">
+        <div className="search-container">
           <input
             type="text"
             placeholder="Search filters..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all duration-200 bg-white/80 backdrop-blur-sm"
+            className="search-input"
             spellCheck={false}
           />
         </div>
       )}
 
       {/* Enhanced Tab Navigation */}
-      <div className="flex flex-wrap justify-center gap-3 mb-4">
+      <div className="tabs-container">
         {displayTabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => onTabChange(tab.key)}
-            className={`
-              px-5 py-4 rounded-xl text-sm font-medium 
-              flex items-center gap-3 transition-all duration-300 
-              border min-w-[140px] backdrop-blur-sm
-              ${
-                activeTab === tab.key 
-                  ? 'bg-white/30 border-white/60 shadow-lg shadow-white/20' 
-                  : 'bg-white/10 border-white/30 hover:bg-white/20 hover:border-white/50'
-              }
-            `}
-            style={{
-              color: 'white',
-              backgroundColor: 'transparent',
-            }}
+            className={`tab-button ${activeTab === tab.key ? 'tab-button--active' : 'tab-button--inactive'}`}
           >
-            <span className="text-lg">{tab.icon}</span>
-            <div className="flex flex-col items-start flex-1">
-              <span className="text-sm font-semibold whitespace-nowrap">
+            <span className="tab-icon">{tab.icon}</span>
+            <div className="tab-content">
+              <span className="tab-label">
                 {tab.label}
               </span>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs font-bold px-2 py-1 bg-white/20 rounded-full">
+              <div className="tab-meta">
+                <span className="tab-count">
                   {tab.count}
                 </span>
                 {tab.description && (
-                  <span className="text-[10px] opacity-80 max-w-[80px] truncate">
+                  <span className="tab-description">
                     {tab.description}
                   </span>
                 )}
@@ -118,10 +106,10 @@ export default function EnhancedFilter({
 
       {/* Show More/Less Button - Borrowed from example */}
       {showSearch && searchTerm.length < 2 && tabs.length > startLength && (
-        <div className="text-center mt-4">
+        <div className="expand-button-container">
           <button
             onClick={toggleExpand}
-            className="px-6 py-2 bg-white/20 hover:bg-white/30 border border-white/30 rounded-full text-white text-sm font-medium transition-all duration-200 backdrop-blur-sm"
+            className="expand-button"
           >
             {isExpanded ? 'Show Less' : `Show More (+${tabs.length - startLength})`}
           </button>
