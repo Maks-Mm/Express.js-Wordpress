@@ -28,7 +28,6 @@ export default function EnhancedFilter({
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredTabs, setFilteredTabs] = useState(tabs);
 
-  // Search functionality borrowed from the example
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
@@ -45,12 +44,10 @@ export default function EnhancedFilter({
     }
   }, [tabs]);
 
-  // Expand/collapse functionality
   const toggleExpand = useCallback(() => {
     setIsExpanded(!isExpanded);
   }, [isExpanded]);
 
-  // Reset expansion when search is cleared
   useEffect(() => {
     if (searchTerm.length < 2) {
       setFilteredTabs(tabs);
@@ -61,8 +58,7 @@ export default function EnhancedFilter({
     (isExpanded ? filteredTabs : filteredTabs.slice(0, startLength));
 
   return (
-    <div className="enhanced-filter-container w-full">
-      {/* Search Input - Borrowed from example */}
+    <div className="enhanced-filter-container">
       {showSearch && (
         <div className="search-container">
           <input
@@ -76,7 +72,6 @@ export default function EnhancedFilter({
         </div>
       )}
 
-      {/* Enhanced Tab Navigation */}
       <div className="tabs-container">
         {displayTabs.map(tab => (
           <button
@@ -96,11 +91,8 @@ export default function EnhancedFilter({
             </div>
           </button>
         ))}
-
-
       </div>
 
-      {/* Show More/Less Button - Borrowed from example */}
       {showSearch && searchTerm.length < 2 && tabs.length > startLength && (
         <div className="expand-button-container">
           <button

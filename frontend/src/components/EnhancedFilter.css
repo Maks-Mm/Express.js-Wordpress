@@ -1,9 +1,10 @@
+/* === Enhanced Filter Styles === */
 .enhanced-filter-container {
   width: 100%;
   max-width: 64rem;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem; /* Adjust distance between filter and WordPress content */
 }
 
 .search-container {
@@ -157,10 +158,11 @@
   .enhanced-filter-container {
     max-width: 100%;
     padding: 0 1rem;
+    margin-bottom: 1.5rem;
   }
 }
 
-/* Alternative grid layout for larger screens */
+/* Grid layout for large screens */
 @media (min-width: 1024px) {
   .tabs-container {
     display: grid;
@@ -170,5 +172,25 @@
   
   .tab-button {
     max-width: none;
+  }
+
+  .enhanced-filter-container {
+    margin-bottom: 4rem;
+  }
+}
+
+/* Loader */
+.loader {
+  border: 4px solid #e5e7eb;
+  border-top: 4px solid #3b82f6;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
