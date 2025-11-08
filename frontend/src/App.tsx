@@ -1,7 +1,6 @@
-
 // frontend/src/App.tsx
 import './App.css';
-import './styles/wordpress.css'; // Add this import
+import './styles/wordpress.css'; // ✅ must come AFTER App.css and Tailwind
 import Posts from './components/Posts';
 import AnimatedBackground from './components/AnimatedBackground';
 

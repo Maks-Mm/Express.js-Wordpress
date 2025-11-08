@@ -71,15 +71,15 @@ export default function Posts() {
     }
   };
 
-  // Enhanced content rendering with sanitization
   const renderContent = (content: { rendered: string }) => {
-    // Basic sanitization and formatting
-    const cleanContent = content.rendered
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '') // Remove scripts
-      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, ''); // Remove styles
-
+    let cleanContent = content.rendered
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+      .replace(/style="[^"]*color:[^;"]*;?[^"]*"/gi, ''); // remove inline colors
     return { __html: cleanContent };
   };
+
+
 
   const handleItemClick = (item: ContentItem) => {
     setSelectedItem(item);
@@ -186,9 +186,9 @@ export default function Posts() {
           <ContentErrorBoundary>
             <div className="wp-content prose prose-lg max-w-none">
               <div
-                className="text-gray-700 leading-relaxed mb-6"
-                dangerouslySetInnerHTML={renderContent(selectedItem.content)}
-              />
+  className="wp-content max-w-none"
+  dangerouslySetInnerHTML={renderContent(selectedItem.content)}
+/>
               <a
                 href={selectedItem.link}
                 target="_blank"
@@ -205,6 +205,7 @@ export default function Posts() {
               className="wp-content prose prose-lg max-w-none"
               dangerouslySetInnerHTML={renderContent(selectedItem.content)}
             />
+
           </ContentErrorBoundary>
         )}
       </div>
