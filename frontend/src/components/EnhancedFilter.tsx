@@ -17,9 +17,9 @@ interface EnhancedFilterProps {
   startLength?: number;
 }
 
-export default function EnhancedFilter({ 
-  tabs, 
-  activeTab, 
+export default function EnhancedFilter({
+  tabs,
+  activeTab,
   onTabChange,
   showSearch = false,
   startLength = 3
@@ -32,12 +32,12 @@ export default function EnhancedFilter({
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
-    
+
     if (value.length < 2) {
       setFilteredTabs(tabs);
     } else {
       setFilteredTabs(
-        tabs.filter(tab => 
+        tabs.filter(tab =>
           tab.label.toLowerCase().includes(value) ||
           tab.description?.toLowerCase().includes(value)
         )
@@ -57,7 +57,7 @@ export default function EnhancedFilter({
     }
   }, [searchTerm, tabs]);
 
-  const displayTabs = searchTerm.length >= 2 ? filteredTabs : 
+  const displayTabs = searchTerm.length >= 2 ? filteredTabs :
     (isExpanded ? filteredTabs : filteredTabs.slice(0, startLength));
 
   return (
@@ -81,27 +81,23 @@ export default function EnhancedFilter({
         {displayTabs.map(tab => (
           <button
             key={tab.key}
-            onClick={() => onTabChange(tab.key)}
+            onClick={() => onTabChange(tab.key.toLowerCase() as 'all' | 'posts' | 'news')}
             className={`tab-button ${activeTab === tab.key ? 'tab-button--active' : 'tab-button--inactive'}`}
           >
             <span className="tab-icon">{tab.icon}</span>
             <div className="tab-content">
-              <span className="tab-label">
-                {tab.label}
-              </span>
+              <span className="tab-label">{tab.label}</span>
               <div className="tab-meta">
-                <span className="tab-count">
-                  {tab.count}
-                </span>
+                <span className="tab-count">{tab.count}</span>
                 {tab.description && (
-                  <span className="tab-description">
-                    {tab.description}
-                  </span>
+                  <span className="tab-description">{tab.description}</span>
                 )}
               </div>
             </div>
           </button>
         ))}
+
+
       </div>
 
       {/* Show More/Less Button - Borrowed from example */}

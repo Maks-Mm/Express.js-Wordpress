@@ -236,7 +236,7 @@ export default function Posts() {
             </p>
 
             {/* Enhanced Debug section */}
-            <div className="text-xs text-gray-400 mt-2 p-2 bg-gray-50 rounded">
+            <div className="text-xs text-white mt-2 p-2 rounded">
               <div><strong>Debug:</strong> {wpContent.length} WP posts | {newsContent.length} News items</div>
               <div className="mt-1">
                 <strong>WP Titles:</strong> {wpContent.map(p => p.title.rendered).join(', ')}
@@ -245,6 +245,7 @@ export default function Posts() {
                 <strong>News Titles:</strong> {newsContent.map(p => p.title.rendered).join(', ')}
               </div>
             </div>
+
           </>
         )}
       </header>
