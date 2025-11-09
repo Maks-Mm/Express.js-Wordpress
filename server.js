@@ -23,6 +23,35 @@ mongoose
 // WordPress API configuration
 const WP_API = "https://public-api.wordpress.com/wp/v2/sites/firstproduc.wordpress.com";
 
+// ✅ GET all MongoDB news
+app.get("/api/mongo/news", async (req, res) => {
+  try {
+    const mongoNews = await News.find().sort({ date: -1 }).lean();
+    res.json(mongoNews);
+  } catch (error) {
+    console.error("Error fetching MongoDB news:", error);
+    res.status(500).json({ error: "Failed to fetch MongoDB news" });
+  }
+});
+
+// ✅ INSERT new MongoDB news items
+app.post("/api/mongo/news/insert", async (req, res) => {
+  try {
+    const { items } = req.body;
+
+    if (!items || !Array.isArray(items)) {
+      return res.status(400).json({ error: "Request body must include an array of 'items'" });
+    }
+
+    const inserted = await News.insertMany(items);
+    res.json({ success: true, count: inserted.length, inserted });
+  } catch (error) {
+    console.error("Error inserting MongoDB news:", error);
+    res.status(500).json({ error: "Failed to insert MongoDB news" });
+  }
+});
+
+
 // 📥 Get all MongoDB news (remove duplicate endpoint)
 app.get("/api/mongo/news", async (req, res) => {
   try {

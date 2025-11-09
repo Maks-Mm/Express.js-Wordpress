@@ -1,3 +1,5 @@
+//frontend/src/components/Post.tsx
+
 import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -38,6 +40,7 @@ const ContentErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ childre
 };
 
 export default function Posts() {
+  
   const [content, setContent] = useState<ContentItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -186,9 +189,9 @@ export default function Posts() {
           <ContentErrorBoundary>
             <div className="wp-content prose prose-lg max-w-none">
               <div
-  className="wp-content max-w-none"
-  dangerouslySetInnerHTML={renderContent(selectedItem.content)}
-/>
+                className="wp-content max-w-none"
+                dangerouslySetInnerHTML={renderContent(selectedItem.content)}
+              />
               <a
                 href={selectedItem.link}
                 target="_blank"
