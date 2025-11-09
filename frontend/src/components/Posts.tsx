@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import EnhancedFilter from "../components/EnhancedFilter";
+import NewsInsertChart from "../components/NewsInsertChart";
 
 interface ContentItem {
   id: string;
@@ -40,7 +41,7 @@ const ContentErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ childre
 };
 
 export default function Posts() {
-  
+
   const [content, setContent] = useState<ContentItem[]>([]);
   const [selectedItem, setSelectedItem] = useState<ContentItem | null>(null);
   const [loading, setLoading] = useState(true);
@@ -255,6 +256,14 @@ export default function Posts() {
       </header>
 
       {/* Rest of your component remains the same... */}
+
+
+      NewsInsertChart
+      {/* Visualization block for MongoDB insert dates */}
+      {newsContent.length > 0 && (
+        <NewsInsertChart newsItems={newsContent} />
+      )}
+
 
       {/* Enhanced Filter Component */}
       <EnhancedFilter
