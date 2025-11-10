@@ -265,6 +265,55 @@ export default function Posts() {
       )}
 
 
+// Inside Posts.tsx, somewhere near 
+
+      <div className="mb-8 bg-gray-100 p-4 rounded-lg">
+        <h3 className="text-lg font-semibold mb-2">📰 Add MongoDB News (Test)</h3>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const title = (form.elements.namedItem("title") as HTMLInputElement).value;
+            const content = (form.elements.namedItem("content") as HTMLInputElement).value;
+            const source = (form.elements.namedItem("source") as HTMLInputElement).value;
+            const date = (form.elements.namedItem("date") as HTMLInputElement).value;
+
+            const res = await fetch("http://localhost:5000/api/mongo/news/insert", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ title, content, source, date }),
+            });
+
+            if (res.ok) {
+              alert("✅ News inserted successfully!");
+            } else {
+              alert("❌ Failed to insert news.");
+            }
+
+            form.reset();
+          }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" name="title" placeholder="Title" className="border p-2 rounded" required />
+            <input type="text" name="source" placeholder="Source" className="border p-2 rounded" />
+            <textarea name="content" placeholder="Content" className="border p-2 rounded md:col-span-2" required />
+            <input
+              type="datetime-local"
+              name="date"
+              className="border p-2 rounded md:col-span-2"
+            />
+          </div>
+          <button
+            type="submit"
+            className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            Add News
+          </button>
+        </form>
+      </div>
+
+
+
       {/* Enhanced Filter Component */}
       <EnhancedFilter
         tabs={tabConfig}

@@ -43,7 +43,13 @@ app.post("/api/mongo/news/insert", async (req, res) => {
       return res.status(400).json({ error: "Request body must include an array of 'items'" });
     }
 
-    const inserted = await News.insertMany(items);
+    // ✅ ensure each inserted item has a date
+    const withDates = items.map(item => ({
+      ...item,
+      date: item.date ? new Date(item.date) : new Date()
+    }));
+
+    const inserted = await News.insertMany(withDates);
     res.json({ success: true, count: inserted.length, inserted });
   } catch (error) {
     console.error("Error inserting MongoDB news:", error);
@@ -176,6 +182,7 @@ app.get("/api/news", async (req, res) => {
 // Combined content endpoint - FIXED VERSION
 app.get("/api/content", async (req, res) => {
   console.log("🔄 Fetching combined content...");
+  
 
   try {
     // Use Promise.allSettled to handle partial failures
