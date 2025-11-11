@@ -9,10 +9,11 @@ const newsSchema = new Schema({
     trim: true
   },
   link: { 
-    type: String, 
-    required: true, 
-    unique: true,
-    trim: true
+     type: String, 
+  required: false,        // ⬅ change this
+  unique: false,          // ⬅ also remove uniqueness if you’ll insert test data
+  trim: true,
+  default: "#"  
   },
   description: {
     type: String,

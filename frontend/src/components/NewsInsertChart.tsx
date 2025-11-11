@@ -1,3 +1,5 @@
+// frontend/src/components/NewsInsertChart.tsx
+
 import { useMemo } from "react";
 import {
   LineChart,

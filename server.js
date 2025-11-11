@@ -38,15 +38,13 @@ app.get("/api/mongo/news", async (req, res) => {
 app.post("/api/mongo/news/insert", async (req, res) => {
   try {
     const { items } = req.body;
-
     if (!items || !Array.isArray(items)) {
       return res.status(400).json({ error: "Request body must include an array of 'items'" });
     }
 
-    // ✅ ensure each inserted item has a date
     const withDates = items.map(item => ({
       ...item,
-      date: item.date ? new Date(item.date) : new Date()
+      date: item.date ? new Date(item.date) : new Date(),
     }));
 
     const inserted = await News.insertMany(withDates);
