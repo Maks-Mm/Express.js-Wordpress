@@ -258,14 +258,12 @@ export default function Posts() {
       {/* Rest of your component remains the same... */}
 
 
-      NewsInsertChart
       {/* Visualization block for MongoDB insert dates */}
       {newsContent.length > 0 && (
         <NewsInsertChart newsItems={newsContent} />
       )}
 
 
-// Inside Posts.tsx, somewhere near 
 
       <div className="mb-8 bg-gray-100 p-4 rounded-lg">
         <h3 className="text-lg font-semibold mb-2">📰 Add MongoDB News (Test)</h3>
@@ -293,16 +291,95 @@ export default function Posts() {
             form.reset();
           }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input type="text" name="title" placeholder="Title" className="border p-2 rounded" required />
-            <input type="text" name="source" placeholder="Source" className="border p-2 rounded" />
-            <textarea name="content" placeholder="Content" className="border p-2 rounded md:col-span-2" required />
+          {/*the block is responsltly for inputs to insert of dates on client page */}
+
+          <div className="mb-8 bg-gray-100 p-4 rounded-lg">
+  <h3 className="text-lg font-semibold mb-4">📰 Add MongoDB News (Table View)</h3>
+  <form
+    onSubmit={async (e) => {
+      e.preventDefault();
+      const form = e.target as HTMLFormElement;
+      const title = (form.elements.namedItem("title") as HTMLInputElement).value;
+      const content = (form.elements.namedItem("content") as HTMLInputElement).value;
+      const source = (form.elements.namedItem("source") as HTMLInputElement).value;
+      const date = (form.elements.namedItem("date") as HTMLInputElement).value;
+
+      const res = await fetch("http://localhost:5000/api/mongo/news/insert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, content, source, date }),
+      });
+
+      if (res.ok) {
+        alert("✅ News inserted successfully!");
+      } else {
+        alert("❌ Failed to insert news.");
+      }
+
+      form.reset();
+    }}
+  >
+    <table className="w-full table-auto border-collapse">
+      <tbody>
+        <tr className="border-b">
+          <td className="px-3 py-2 font-medium text-gray-700 w-32">Title</td>
+          <td className="px-3 py-2">
+            <input
+              type="text"
+              name="title"
+              placeholder="Enter news title"
+              className="w-full border p-2 rounded"
+              required
+            />
+          </td>
+        </tr>
+        <tr className="border-b">
+          <td className="px-3 py-2 font-medium text-gray-700">Source</td>
+          <td className="px-3 py-2">
+            <input
+              type="text"
+              name="source"
+              placeholder="News source"
+              className="w-full border p-2 rounded"
+            />
+          </td>
+        </tr>
+        <tr className="border-b">
+          <td className="px-3 py-2 font-medium text-gray-700 align-top">Content</td>
+          <td className="px-3 py-2">
+            <textarea
+              name="content"
+              placeholder="Enter news content"
+              rows={4}
+              className="w-full border p-2 rounded resize-none"
+              required
+            />
+          </td>
+        </tr>
+        <tr>
+          <td className="px-3 py-2 font-medium text-gray-700">Date & Time</td>
+          <td className="px-3 py-2">
             <input
               type="datetime-local"
               name="date"
-              className="border p-2 rounded md:col-span-2"
+              className="w-full border p-2 rounded"
             />
-          </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div className="mt-4 text-right">
+      <button
+        type="submit"
+        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+      >
+        Add News
+      </button>
+    </div>
+  </form>
+</div>
+
+
           <button
             type="submit"
             className="mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
