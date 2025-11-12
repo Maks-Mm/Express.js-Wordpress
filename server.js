@@ -45,9 +45,18 @@ app.post("/api/mongo/news/insert", async (req, res) => {
     const withDates = items.map(item => ({
       ...item,
       date: item.date ? new Date(item.date) : new Date(),
+      link: item.link || `#${Date.now()}-${Math.random()}` // auto-unique link
     }));
 
-    const inserted = await News.insertMany(withDates);
+    const inserted = [];
+    for (const item of withDates) {
+      const exists = await News.findOne({ link: item.link });
+      if (!exists) {
+        const doc = await News.create(item);
+        inserted.push(doc);
+      }
+    }
+
     res.json({ success: true, count: inserted.length, inserted });
   } catch (error) {
     console.error("Error inserting MongoDB news:", error);
