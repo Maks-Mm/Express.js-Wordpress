@@ -12,9 +12,7 @@ import {
   Legend,
 } from "recharts";
 
-//import styles from "../components/NewsInsertChart.module.css";
 import styles from './NewsInsertChart.module.css';
-
 
 interface NewsItem {
   date: string;
@@ -40,25 +38,48 @@ export default function NewsInsertChart({ newsItems }: Props) {
   }, [newsItems]);
 
   if (data.length === 0) {
-    return <div className={styles.empty}>⚠️ No MongoDB news data found for visualization.</div>;
+    return (
+      <div className={styles.glassCard}>
+        <div className={styles.empty}>⚠️ No MongoDB news data found for visualization.</div>
+      </div>
+    );
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.glassCard}>
       <div className={styles.header}>
-        <h3 className={styles.title}>🗓️ MongoDB Insert Activity</h3>
+        <h3 className={styles.title}>
+          <span className={styles.titleIcon}>🗓️</span>
+          MongoDB Insert Activity
+        </h3>
         <span className={styles.subtitle}>Showing {data.length} days of inserts</span>
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data} margin={{ top: 20, right: 30, left: 10, bottom: 10 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-          <XAxis dataKey="date" tick={{ fontSize: 12, fill: "#4b5563" }} tickLine={false} axisLine={false} />
-          <YAxis allowDecimals={false} tick={{ fontSize: 12, fill: "#4b5563" }} tickLine={false} axisLine={false} />
+          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.2)" />
+          <XAxis 
+            dataKey="date" 
+            tick={{ fontSize: 12, fill: "rgba(255, 255, 255, 0.8)" }} 
+            tickLine={false} 
+            axisLine={false} 
+          />
+          <YAxis 
+            allowDecimals={false} 
+            tick={{ fontSize: 12, fill: "rgba(255, 255, 255, 0.8)" }} 
+            tickLine={false} 
+            axisLine={false} 
+          />
           <Tooltip
-            contentStyle={{ backgroundColor: "white", borderRadius: "8px", border: "1px solid #e5e7eb" }}
+            contentStyle={{ 
+              backgroundColor: "rgba(255, 255, 255, 0.9)", 
+              backdropFilter: "blur(10px)",
+              borderRadius: "8px", 
+              border: "1px solid rgba(255, 255, 255, 0.3)",
+              color: "#111827"
+            }}
             labelStyle={{ color: "#111827", fontWeight: 500 }}
-            cursor={{ stroke: "#d1fae5", strokeWidth: 2 }}
+            cursor={{ stroke: "rgba(22, 163, 74, 0.3)", strokeWidth: 2 }}
           />
           <Legend verticalAlign="top" height={36} />
           <Line
