@@ -1,4 +1,4 @@
-/* App.css */
+/* frontend/src/App.css */
 
 /* Animated Background */
 .animated-background {
@@ -252,4 +252,48 @@
 .glass-button:active {
   transform: translateY(0);
   box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+}
+
+
+
+
+/* === Glassmorphism Form Styles (NewsForm) === */
+.glass-card {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px 0 rgba(16, 185, 129, 0.3);
+}
+
+.gradient-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.4);
+}
+
+.title-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
