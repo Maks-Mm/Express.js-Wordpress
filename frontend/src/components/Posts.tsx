@@ -221,7 +221,7 @@ export default function Posts() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       {/* Header Section */}
-      <header className="text-center mb-12" data-aos="fade-down">
+      <header className="text-center mb-12" data-aos="fade-down"  style={{ color: "white" }}>
         <h1 className="text-4xl font-bold text-gray-900 mb-3">Dortmund News Hub</h1>
         <p className="text-lg text-gray-600 mb-4">
           Your gateway to BVB news and tech insights
@@ -243,7 +243,8 @@ export default function Posts() {
             </p>
 
             {/* Enhanced Debug section */}
-            <div className="text-xs text-white mt-2 p-2 rounded">
+            <div className="text-xs mt-2 p-2 rounded bg-gray-900" style={{ color: "white" }}>
+
               <div><strong>Debug:</strong> {wpContent.length} WP posts | {newsContent.length} News items</div>
               <div className="mt-1">
                 <strong>WP Titles:</strong> {wpContent.map(p => p.title.rendered).join(', ')}
@@ -252,6 +253,8 @@ export default function Posts() {
                 <strong>News Titles:</strong> {newsContent.map(p => p.title.rendered).join(', ')}
               </div>
             </div>
+
+
 
           </>
         )}
@@ -284,7 +287,7 @@ export default function Posts() {
 
       {/* Main WordPress Posts Section */}
       {topWpPosts.length > 0 && activeTab !== 'news' && (
-        <section className="mb-12" data-aos="fade-up">
+        <section className="mb-12" data-aos="fade-up" style={{ color: "white" }}>
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -352,7 +355,8 @@ export default function Posts() {
 
       {/* MongoDB News Section with Special Header */}
       {newsContent.length > 0 && activeTab !== 'posts' && (
-        <section className="mb-12" data-aos="fade-up">
+        <section className="mb-12" data-aos="fade-up" style={{ color: "white" }}>
+
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 mb-6 text-white">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">⚡</span>
