@@ -133,12 +133,13 @@ const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
         <div className="form-actions">
           <button
             type="submit"
-            className={`gradient-btn ${loading ? "loading" : ""}`}
+            className={`btn-glass ${loading ? "loading" : ""}`}
             disabled={loading}
           >
             <i className="fas fa-plus-circle"></i>
             {loading ? "Adding..." : "Add News"}
           </button>
+
         </div>
       </form>
     </div>
