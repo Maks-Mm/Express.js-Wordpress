@@ -1,6 +1,6 @@
-// frontend/src/components/NewsForm.tsx
 import React, { useState } from "react";
 import "./NewsForm.css";
+import toast from "react-hot-toast";
 
 interface NewsFormData {
   title: string;
@@ -46,22 +46,23 @@ const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
       const data = await res.json();
 
       if (res.ok) {
-        alert("✅ News inserted successfully!");
-        // Reset form
+        toast.success("News inserted successfully!");
+
         setFormData({
           title: "",
           content: "",
           source: "",
           date: "",
         });
+
         if (onSuccess) onSuccess();
       } else {
         console.error("❌ Server error:", data);
-        alert(`❌ Failed to insert news: ${data.error || "Unknown error"}`);
+        toast.error(`Failed to insert news: ${data.error || "Unknown error"}`);
       }
     } catch (err) {
       console.error("Network error:", err);
-      alert("⚠️ Could not connect to backend.");
+      toast.error("Could not connect to backend.");
     } finally {
       setLoading(false);
     }
@@ -139,7 +140,6 @@ const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
             <i className="fas fa-plus-circle"></i>
             {loading ? "Adding..." : "Add News"}
           </button>
-
         </div>
       </form>
     </div>
