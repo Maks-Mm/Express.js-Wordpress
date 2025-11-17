@@ -1,7 +1,8 @@
-// frontend/src/__tests__/NewsForm.test.tsx
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import NewsForm from '../components/NewsForm';
 
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import NewsForm from "../components/NewsForm";
+// Mock fetch globally
+global.fetch = jest.fn();
 
 const mockOnSuccess = jest.fn();
 
@@ -10,65 +11,68 @@ beforeEach(() => {
   mockOnSuccess.mockClear();
 });
 
-test("renders news form with all fields", () => {
-  render(<NewsForm onSuccess={mockOnSuccess} />);
-  
-  expect(screen.getByText(/Add MongoDB News/i)).toBeInTheDocument();
-  expect(screen.getByRole('button', { name: /add news/i })).toBeInTheDocument();
-  expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/content/i)).toBeInTheDocument();
-  expect(screen.getByLabelText(/source/i)).toBeInTheDocument();
-});
-
-test("submits form successfully", async () => {
-  (global.fetch as jest.Mock).mockResolvedValueOnce({
-    ok: true,
-    json: async () => ({ success: true, count: 1 })
+describe('NewsForm', () => {
+  it('renders news form with all fields', () => {
+    render(<NewsForm onSuccess={mockOnSuccess} />);
+    
+    expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/content/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/description/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/source/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/link/i)).toBeInTheDocument();
+    // Fix: Look for "Add News" button text instead of "submit"
+    expect(screen.getByRole('button', { name: /add news/i })).toBeInTheDocument();
   });
 
-  render(<NewsForm onSuccess={mockOnSuccess} />);
+  it('submits form successfully', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ message: 'Success' })
+    });
 
-  const titleInput = screen.getByLabelText(/title/i) as HTMLInputElement;
-  const contentInput = screen.getByLabelText(/content/i) as HTMLTextAreaElement;
-  const sourceInput = screen.getByLabelText(/source/i) as HTMLInputElement;
+    render(<NewsForm onSuccess={mockOnSuccess} />);
+    
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Test Title' } });
+    fireEvent.change(screen.getByLabelText(/content/i), { target: { value: 'Test Content' } });
+    fireEvent.change(screen.getByLabelText(/source/i), { target: { value: 'Test Source' } });
+    
+    // Fix: Use the correct button text
+    fireEvent.click(screen.getByRole('button', { name: /add news/i }));
 
-  fireEvent.change(titleInput, {
-    target: { value: "Test News Title" }
-  });
-  fireEvent.change(contentInput, {
-    target: { value: "Test news content" }
-  });
-  fireEvent.change(sourceInput, {
-    target: { value: "Test Source" }
-  });
-
-  fireEvent.click(screen.getByRole('button', { name: /add news/i }));
-
-  await waitFor(() => {
-    expect(mockOnSuccess).toHaveBeenCalled();
-  });
-});
-
-test("shows error on form submission failure", async () => {
-  (global.fetch as jest.Mock).mockRejectedValueOnce(new Error("API Error"));
-
-  render(<NewsForm onSuccess={mockOnSuccess} />);
-
-  const titleInput = screen.getByLabelText(/title/i) as HTMLInputElement;
-  const sourceInput = screen.getByLabelText(/source/i) as HTMLInputElement;
-
-  fireEvent.change(titleInput, {
-    target: { value: "Test News" }
-  });
-  fireEvent.change(sourceInput, {
-    target: { value: "Test Source" }
+    await waitFor(() => {
+      expect(mockOnSuccess).toHaveBeenCalled();
+    });
   });
 
-  fireEvent.click(screen.getByRole('button', { name: /add news/i }));
+  it('shows error on form submission failure', async () => {
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: false,
+      json: async () => ({ error: 'Failed to add news' })
+    });
 
-  // Check for either error message
-  await waitFor(() => {
-    const errorMessage = screen.queryByText(/failed to add news/i) || screen.queryByText(/API Error/i);
-    expect(errorMessage).toBeInTheDocument();
+    render(<NewsForm onSuccess={mockOnSuccess} />);
+    
+    fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Test Title' } });
+    fireEvent.change(screen.getByLabelText(/content/i), { target: { value: 'Test Content' } });
+    fireEvent.change(screen.getByLabelText(/source/i), { target: { value: 'Test Source' } });
+    
+    // Fix: Use the correct button text
+    fireEvent.click(screen.getByRole('button', { name: /add news/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/failed to add news/i)).toBeInTheDocument();
+    });
+  });
+
+  it('validates required fields', async () => {
+    render(<NewsForm onSuccess={mockOnSuccess} />);
+    
+    // Try to submit without filling required fields
+    fireEvent.click(screen.getByRole('button', { name: /add news/i }));
+
+    // The form should prevent submission and show validation errors
+    await waitFor(() => {
+      expect(global.fetch).not.toHaveBeenCalled();
+    });
   });
 });

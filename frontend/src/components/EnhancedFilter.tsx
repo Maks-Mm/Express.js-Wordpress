@@ -1,3 +1,4 @@
+// frontend/src/components/EnhancedFilter.tsx
 import { useCallback, useState, useEffect } from "react";
 import './EnhancedFilter.css';
 

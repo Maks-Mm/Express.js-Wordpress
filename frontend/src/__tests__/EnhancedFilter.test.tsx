@@ -1,85 +1,73 @@
-// frontend/src/components/EnhancedFilter.tsx
-import { useState } from "react"; // Make sure this import exists
+// frontend/src/_tests/EnhancedFilter.test.tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import EnhancedFilter from '../components/EnhancedFilter';
 
-export interface FilterTab {
-  key: 'all' | 'posts' | 'news';
-  label: string;
-  count: number;
-  icon: string;
-  description?: string;
-}
+// Mock data for testing
+const mockTabs = [
+  { key: 'all' as const, label: 'All Content', count: 10, icon: '📁', description: 'All types of content' },
+  { key: 'posts' as const, label: 'Posts', count: 7, icon: '📝', description: 'Blog posts and articles' },
+  { key: 'news' as const, label: 'News', count: 3, icon: '📰', description: 'News updates' },
+];
 
-export interface EnhancedFilterProps {
-  tabs: FilterTab[];
-  activeTab: 'all' | 'posts' | 'news';
-  onTabChange: (tab: 'all' | 'posts' | 'news') => void;
-  showSearch?: boolean;
-  onSearchChange?: (query: string) => void;
-}
+const mockOnTabChange = jest.fn();
 
-const EnhancedFilter: React.FC<EnhancedFilterProps> = ({
-  tabs,
-  activeTab,
-  onTabChange,
-  showSearch = true,
-  onSearchChange
-}) => {
-  const [searchQuery, setSearchQuery] = useState('');
+describe('EnhancedFilter', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    onSearchChange?.(value);
-  };
+  it('renders all tabs when not expanded', () => {
+    render(
+      <EnhancedFilter
+        tabs={mockTabs}
+        activeTab="all"
+        onTabChange={mockOnTabChange}
+        showSearch={true}
+        startLength={3}
+      />
+    );
 
-  return (
-    <div className="filter-container bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
-      {/* Tabs */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => onTabChange(tab.key)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-              activeTab === tab.key
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            <span>{tab.icon}</span>
-            <span>{tab.label}</span>
-            {tab.count > 0 && (
-              <span
-                className={`px-2 py-1 text-xs rounded-full ${
-                  activeTab === tab.key
-                    ? 'bg-white text-blue-500'
-                    : 'bg-gray-300 text-gray-700'
-                }`}
-              >
-                {tab.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+    expect(screen.getByText('All Content')).toBeInTheDocument();
+    expect(screen.getByText('Posts')).toBeInTheDocument();
+    expect(screen.getByText('News')).toBeInTheDocument();
+  });
 
-      {/* Search */}
-      {showSearch && (
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search content..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-          <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
-            🔍
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+  it('calls onTabChange when a tab is clicked', () => {
+    render(
+      <EnhancedFilter
+        tabs={mockTabs}
+        activeTab="all"
+        onTabChange={mockOnTabChange}
+      />
+    );
 
-export default EnhancedFilter;
+    fireEvent.click(screen.getByText('Posts'));
+    expect(mockOnTabChange).toHaveBeenCalledWith('posts');
+  });
+
+  it('shows search input when showSearch is true', () => {
+    render(
+      <EnhancedFilter
+        tabs={mockTabs}
+        activeTab="all"
+        onTabChange={mockOnTabChange}
+        showSearch={true}
+      />
+    );
+
+    expect(screen.getByPlaceholderText('Search filters...')).toBeInTheDocument();
+  });
+
+  it('does not show search input when showSearch is false', () => {
+    render(
+      <EnhancedFilter
+        tabs={mockTabs}
+        activeTab="all"
+        onTabChange={mockOnTabChange}
+        showSearch={false}
+      />
+    );
+
+    expect(screen.queryByPlaceholderText('Search filters...')).not.toBeInTheDocument();
+  });
+});

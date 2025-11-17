@@ -1,13 +1,22 @@
 //frontend/src/components/Post.tsx
 
+import "aos/dist/aos.css";
 import { useEffect, useState } from "react";
 import AOS from "aos";
-import "aos/dist/aos.css";
 import EnhancedFilter from "../components/EnhancedFilter";
 import NewsInsertChart from "../components/NewsInsertChart";
 import "../App.css";
 import NewsForm from "../components/NewsForm"
 
+
+// Conditionally import AOS CSS to avoid issues in test environment
+if (typeof process === 'undefined' || process.env.NODE_ENV !== 'test') {
+  try {
+    require("aos/dist/aos.css");
+  } catch (error) {
+    console.warn('AOS CSS could not be loaded');
+  }
+}
 
 interface ContentItem {
   id: string;
