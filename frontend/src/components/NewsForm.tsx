@@ -62,102 +62,130 @@ const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4">📰 Add MongoDB News</h3>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-            Title *
-          </label>
-          <input
-            id="title"
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+    <div className="news-form-container">
+      <div className="glass-card">
+        <div className="form-header">
+          <span className="title-icon">📰</span>
+          <h3>Add MongoDB News</h3>
         </div>
-
-        <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-            Content
-          </label>
-          <textarea
-            id="content"
-            name="content"
-            value={formData.content}
-            onChange={handleChange}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={2}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
-            Source *
-          </label>
-          <input
-            id="source"
-            type="text"
-            name="source"
-            value={formData.source}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
-            Link
-          </label>
-          <input
-            id="link"
-            type="url"
-            name="link"
-            value={formData.link}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {error && (
-          <div className="text-red-600 text-sm bg-red-50 p-2 rounded">
-            {error}
+        
+        <form onSubmit={handleSubmit} className="form-grid">
+          <div className="form-group">
+            <label htmlFor="title" className="form-label">
+              Title *
+            </label>
+            <input
+              id="title"
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              required
+              placeholder="Enter news title"
+              className="glass-input"
+            />
           </div>
-        )}
 
-        {success && (
-          <div className="text-green-600 text-sm bg-green-50 p-2 rounded">
-            ✅ News added successfully!
+          <div className="form-group">
+            <label htmlFor="source" className="form-label">
+              Source *
+            </label>
+            <input
+              id="source"
+              type="text"
+              name="source"
+              value={formData.source}
+              onChange={handleChange}
+              required
+              placeholder="News source"
+              className="glass-input"
+            />
           </div>
-        )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-        >
-          {loading ? 'Adding...' : 'Add News'}
-        </button>
-      </form>
+          <div className="form-group full-width">
+            <label htmlFor="content" className="form-label">
+              Content
+            </label>
+            <textarea
+              id="content"
+              name="content"
+              value={formData.content}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Enter news content"
+              className="glass-input"
+            />
+          </div>
+
+          <div className="form-group full-width">
+            <label htmlFor="description" className="form-label">
+              Description
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={2}
+              placeholder="Enter news description"
+              className="glass-input"
+            />
+          </div>
+
+          <div className="form-group full-width">
+            <label htmlFor="link" className="form-label">
+              Link
+            </label>
+            <input
+              id="link"
+              type="url"
+              name="link"
+              value={formData.link}
+              onChange={handleChange}
+              placeholder="https://example.com"
+              className="glass-input"
+            />
+          </div>
+
+          {error && (
+            <div className="form-group full-width">
+              <div className="text-red-300 text-sm bg-red-500/20 p-3 rounded-lg border border-red-400/30">
+                {error}
+              </div>
+            </div>
+          )}
+
+          {success && (
+            <div className="form-group full-width">
+              <div className="text-green-300 text-sm bg-green-500/20 p-3 rounded-lg border border-green-400/30">
+                ✅ News added successfully!
+              </div>
+            </div>
+          )}
+
+          <div className="form-group full-width">
+            <div className="form-actions">
+              <button
+                type="submit"
+                disabled={loading}
+                className={`gradient-btn ${loading ? 'loading' : ''}`}
+              >
+                {loading ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin"></i>
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-plus-circle"></i>
+                    Add News
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

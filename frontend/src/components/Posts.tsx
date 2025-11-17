@@ -231,7 +231,7 @@ export default function Posts() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       {/* Header Section */}
-      <header className="text-center mb-12" data-aos="fade-down"  style={{ color: "white" }}>
+      <header className="text-center mb-12" data-aos="fade-down" style={{ color: "white" }}>
         <h1 className="text-4xl font-bold text-gray-900 mb-3">Dortmund News Hub</h1>
         <p className="text-lg text-gray-600 mb-4">
           Your gateway to BVB news and tech insights
@@ -281,7 +281,6 @@ export default function Posts() {
 
 
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4">📰 Add MongoDB News</h3>
         <NewsForm onSuccess={fetchContent} />
       </div>
 
