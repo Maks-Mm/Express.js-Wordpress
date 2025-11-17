@@ -1,146 +1,162 @@
-import React, { useState } from "react";
+// frontend/src/components/NewsForm.tsx
 import "./NewsForm.css";
 import toast from "react-hot-toast";
-
-interface NewsFormData {
-  title: string;
-  content: string;
-  source: string;
-  date: string;
-}
+import { useState } from "react";
 
 interface NewsFormProps {
-  onSuccess?: () => void;
+  onSuccess: () => void;
 }
 
 const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<NewsFormData>({
-    title: "",
-    content: "",
-    source: "",
-    date: "",
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    description: '',
+    source: '',
+    link: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/mongo/news/insert", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: [formData] }),
+      const response = await fetch('http://localhost:5000/api/mongo/news/insert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: [{
+            ...formData,
+            date: new Date().toISOString()
+          }]
+        }),
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success("News inserted successfully!");
-
-        setFormData({
-          title: "",
-          content: "",
-          source: "",
-          date: "",
-        });
-
-        if (onSuccess) onSuccess();
-      } else {
-        console.error("❌ Server error:", data);
-        toast.error(`Failed to insert news: ${data.error || "Unknown error"}`);
+      if (!response.ok) {
+        throw new Error('Failed to add news');
       }
+
+      setSuccess(true);
+      setFormData({ title: '', content: '', description: '', source: '', link: '' });
+      onSuccess();
+      
+      setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
-      console.error("Network error:", err);
-      toast.error("Could not connect to backend.");
+      setError(err instanceof Error ? err.message : 'Failed to add news');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
   return (
-    <div className="news-form-container">
-      <form onSubmit={handleSubmit} className="glass-card">
-        <div className="form-header">
-          <i className="fas fa-newspaper title-icon"></i>
-          <h3>Add MongoDB News (Test)</h3>
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h3 className="text-lg font-semibold mb-4">📰 Add MongoDB News</h3>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+            Title *
+          </label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
-        <div className="form-grid">
-          <div className="form-group">
-            <label className="form-label">Title</label>
-            <input
-              type="text"
-              name="title"
-              placeholder="Enter news title"
-              value={formData.title}
-              onChange={handleChange}
-              className="glass-input"
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Source</label>
-            <input
-              type="text"
-              name="source"
-              placeholder="News source"
-              value={formData.source}
-              onChange={handleChange}
-              className="glass-input"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="form-group full-width">
-            <label className="form-label">Content</label>
-            <textarea
-              name="content"
-              placeholder="Enter news content"
-              rows={4}
-              value={formData.content}
-              onChange={handleChange}
-              className="glass-input"
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <div className="form-group full-width">
-            <label className="form-label">Date & Time</label>
-            <input
-              type="datetime-local"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className="glass-input"
-              disabled={loading}
-            />
-          </div>
+        <div>
+          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+            Content
+          </label>
+          <textarea
+            id="content"
+            name="content"
+            value={formData.content}
+            onChange={handleChange}
+            rows={3}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
 
-        <div className="form-actions">
-          <button
-            type="submit"
-            className={`btn-glass ${loading ? "loading" : ""}`}
-            disabled={loading}
-          >
-            <i className="fas fa-plus-circle"></i>
-            {loading ? "Adding..." : "Add News"}
-          </button>
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            rows={2}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
         </div>
+
+        <div>
+          <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">
+            Source *
+          </label>
+          <input
+            id="source"
+            type="text"
+            name="source"
+            value={formData.source}
+            onChange={handleChange}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
+            Link
+          </label>
+          <input
+            id="link"
+            type="url"
+            name="link"
+            value={formData.link}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {error && (
+          <div className="text-red-600 text-sm bg-red-50 p-2 rounded">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="text-green-600 text-sm bg-green-50 p-2 rounded">
+            ✅ News added successfully!
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+        >
+          {loading ? 'Adding...' : 'Add News'}
+        </button>
       </form>
     </div>
   );

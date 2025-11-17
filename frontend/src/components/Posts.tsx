@@ -8,6 +8,7 @@ import NewsInsertChart from "../components/NewsInsertChart";
 import "../App.css";
 import NewsForm from "../components/NewsForm"
 
+
 interface ContentItem {
   id: string;
   title: { rendered: string };
@@ -21,8 +22,8 @@ interface ContentItem {
   source?: string;
 }
 
-// Content Error Boundary Component
-const ContentErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// Content Error Boundary Component - ADD EXPORT HERE
+export const ContentErrorBoundary: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
