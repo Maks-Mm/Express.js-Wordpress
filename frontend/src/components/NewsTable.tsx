@@ -1,15 +1,15 @@
-//frontend/src/components/NewsTable.tsx
+// frontend/src/components/NewsTable.tsx
 
 import { useEffect, useState } from "react";
 
 interface NewsItem {
-  _id: string;
-  title: string;
+  id: string;
+  title: { rendered: string };
+  content: { rendered: string };
+  excerpt: { rendered: string };
   source?: string;
   date: string;
   link?: string;
-  content?: string;
-  description?: string;
 }
 
 export default function NewsTable() {
@@ -36,11 +36,7 @@ export default function NewsTable() {
   if (loading) return <p className="text-center py-10">Loading MongoDB data...</p>;
 
   if (news.length === 0)
-    return (
-      <p className="text-center py-10">
-        No MongoDB data found.
-      </p>
-    );
+    return <p className="text-center py-10">No MongoDB data found.</p>;
 
   return (
     <div className="overflow-x-auto mt-10">
@@ -53,33 +49,29 @@ export default function NewsTable() {
             <th className="p-3 text-left">Source</th>
             <th className="p-3 text-left">Date</th>
             <th className="p-3 text-left">Link</th>
-            <th className="p-3 text-left">Content / Description</th>
+            <th className="p-3 text-left">Excerpt</th>
           </tr>
         </thead>
+
         <tbody>
           {news.map((item) => (
-            <tr key={item._id} className="hover:bg-gray-50">
-              <td className="p-3">{item.title}</td>
+            <tr key={item.id} className="hover:bg-gray-50">
+              <td className="p-3">{item.title.rendered}</td>
               <td className="p-3">{item.source || "MongoDB Feed"}</td>
               <td className="p-3">
                 {new Date(item.date).toLocaleString("en-US")}
               </td>
               <td className="p-3">
-                {item.link ? (
-                  <a
-                    href={item.link}
-                    target="_blank"
-                    className="text-blue-600 hover:underline"
-                  >
-                    Open ↗
-                  </a>
-                ) : (
-                  "-"
-                )}
+                <a
+                  href={item.link || "#"}
+                  target="_blank"
+                  className="text-blue-600 hover:underline"
+                >
+                  Open ↗
+                </a>
               </td>
               <td className="p-3 text-gray-600">
-                {(item.description || item.content || "")
-                  .slice(0, 120) + "..."}
+                {item.excerpt?.rendered?.replace(/<[^>]+>/g, "").slice(0, 120) + "..."}
               </td>
             </tr>
           ))}
