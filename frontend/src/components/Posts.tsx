@@ -280,9 +280,6 @@ export default function Posts() {
       </header>
 
 
-      {/* Rest of your component remains the same... */}
-
-
       {/* Visualization block for MongoDB insert dates */}
       {newsContent.length > 0 && (
         <NewsInsertChart newsItems={newsContent} />
