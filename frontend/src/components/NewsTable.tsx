@@ -1,6 +1,7 @@
 // frontend/src/components/NewsTable.tsx
 
 import { useEffect, useState } from "react";
+import styles from "./NewsTable.module.css";
 
 interface NewsItem {
   id: string;
@@ -33,57 +34,69 @@ export default function NewsTable() {
     fetchNews();
   }, []);
 
-  if (loading) return <p className="text-center py-10">Loading MongoDB data...</p>;
+  const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
 
-  if (news.length === 0)
-    return <p className="text-center py-10">No MongoDB data found.</p>;
+  if (loading) return <div className={styles.loading}>Loading latest news...</div>;
+
+  if (news.length === 0) return <div className={styles.empty}>No news articles found.</div>;
 
   return (
-    <div className="overflow-x-auto mt-10">
-      <h2 className="text-xl font-bold mb-4">📊 MongoDB News Table</h2>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h2 className={styles.title}>📰 Latest News</h2>
+        <button onClick={fetchNews} className={styles.refreshBtn}>
+          🔄 Refresh
+        </button>
+      </div>
 
-      <table className="min-w-full text-sm border border-gray-300 rounded-lg">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-3 text-left">Title</th>
-            <th className="p-3 text-left">Source</th>
-            <th className="p-3 text-left">Date</th>
-            <th className="p-3 text-left">Link</th>
-            <th className="p-3 text-left">Excerpt</th>
-          </tr>
-        </thead>
+      <div className={styles.newsGrid}>
+        {news.map((item) => (
+          <article key={item.id} className={styles.newsCard}>
+            <div className={styles.cardHeader}>
+              <h3 className={styles.newsTitle}>
+                {item.link ? (
+                  <a 
+                    href={item.link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className={styles.titleLink}
+                  >
+                    {stripHtml(item.title.rendered)}
+                  </a>
+                ) : (
+                  stripHtml(item.title.rendered)
+                )}
+              </h3>
+              <span className={styles.source}>{item.source || "MongoDB Feed"}</span>
+            </div>
 
-        <tbody>
-          {news.map((item) => (
-            <tr key={item.id} className="hover:bg-gray-50">
-              <td className="p-3">{item.title.rendered}</td>
-              <td className="p-3">{item.source || "MongoDB Feed"}</td>
-              <td className="p-3">
-                {new Date(item.date).toLocaleString("en-US")}
-              </td>
-              <td className="p-3">
+            <p className={styles.excerpt}>
+              {stripHtml(item.excerpt?.rendered || item.content?.rendered || "").slice(0, 160)}
+              {stripHtml(item.excerpt?.rendered || item.content?.rendered || "").length > 160 ? "..." : ""}
+            </p>
+
+            <div className={styles.cardFooter}>
+              <time className={styles.date}>
+                {new Date(item.date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                })}
+              </time>
+              {item.link && (
                 <a
-                  href={item.link || "#"}
+                  href={item.link}
                   target="_blank"
-                  className="text-blue-600 hover:underline"
+                  rel="noopener noreferrer"
+                  className={styles.readMore}
                 >
-                  Open ↗
+                  Read more →
                 </a>
-              </td>
-              <td className="p-3 text-gray-600">
-                {item.excerpt?.rendered?.replace(/<[^>]+>/g, "").slice(0, 120) + "..."}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <button
-        onClick={fetchNews}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-      >
-        🔄 Refresh Table
-      </button>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
     </div>
   );
 }
