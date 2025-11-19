@@ -7,6 +7,7 @@ import EnhancedFilter from "../components/EnhancedFilter";
 import NewsInsertChart from "../components/NewsInsertChart";
 import "../App.css";
 import NewsForm from "../components/NewsForm"
+import NewsTable from "../components/NewsTable";
 
 
 // Conditionally import AOS CSS to avoid issues in test environment
@@ -174,6 +175,7 @@ export default function Posts() {
         <button onClick={handleBackClick} className="btn-glass mb-6">
           ← Back to {isNews ? 'Live Updates' : 'Stable Content'}
         </button>
+
 
         {isNews && (
           <div className="flex items-center gap-2 mb-4">
@@ -365,7 +367,7 @@ export default function Posts() {
       {/* MongoDB News Section with Special Header */}
       {newsContent.length > 0 && activeTab !== 'posts' && (
         <section className="mb-12" data-aos="fade-up" style={{ color: "white" }}>
-
+          <NewsTable />
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 mb-6 text-white">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">⚡</span>
