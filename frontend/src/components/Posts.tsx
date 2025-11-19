@@ -233,44 +233,52 @@ export default function Posts() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       {/* Header Section */}
-      <header className="text-center mb-12" data-aos="fade-down" style={{ color: "white" }}>
-        <h1 className="text-4xl font-bold text-gray-900 mb-3">Dortmund News Hub</h1>
-        <p className="text-lg text-gray-600 mb-4">
-          Your gateway to BVB news and tech insights
+      <header
+        className="text-center mb-16 space-y-6"
+        data-aos="fade-down"
+        style={{ color: "white" }}
+      >
+        {/* Title */}
+        <h1 className="text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
+          Dortmund News Hub
+        </h1>
+
+        {/* Subtitle (softer, more friendly) */}
+        <p className="text-lg text-gray-300 max-w-xl mx-auto leading-relaxed">
+          Stay updated with the latest from BVB & cutting-edge technology insights.
         </p>
 
-        {/* Tech Stack Badge */}
-        <div className="inline-flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white text-sm font-medium mb-6">
-          <span className="flex items-center gap-1">
-            🏛️ WordPress + ⚡ MongoDB
-          </span>
-          <span className="text-white/70">|</span>
-          <span>Powered by Advanced Scraper Technology</span>
+        {/* Tech Badge – more modern look */}
+        <div className="inline-flex items-center gap-4 px-6 py-2 bg-gray-800/80 backdrop-blur-md rounded-full shadow-lg text-sm font-medium border border-white/10 hover:scale-105 transition-transform">
+          <span className="flex items-center gap-1">🏛️ WordPress + ⚡ MongoDB</span>
+          <span className="text-gray-400">|</span>
+          <span className="text-gray-200">Advanced Scraper Technology</span>
         </div>
 
+        {/* Content Info – separated for readability */}
         {content.length > 0 && (
-          <>
-            <p className="text-sm text-gray-500">
+          <div className="space-y-3 mt-8">
+            <p className="text-sm text-gray-400 italic">
               {filteredContent.length} items loaded • {wpCount} stable posts • {newsCount} live updates
             </p>
 
-            {/* Enhanced Debug section */}
-            <div className="text-xs mt-2 p-2 rounded bg-gray-900" style={{ color: "white" }}>
-
-              <div><strong>Debug:</strong> {wpContent.length} WP posts | {newsContent.length} News items</div>
-              <div className="mt-1">
-                <strong>WP Titles:</strong> {wpContent.map(p => p.title.rendered).join(', ')}
-              </div>
-              <div className="mt-1">
-                <strong>News Titles:</strong> {newsContent.map(p => p.title.rendered).join(', ')}
-              </div>
+            {/* Debug panel (hidden feeling / optional) */}
+            <div className="text-xs p-4 rounded-lg bg-black/40 border border-gray-700 text-gray-300 max-w-2xl mx-auto shadow-md">
+              <details>
+                <summary className="cursor-pointer font-semibold hover:underline">
+                  Developer Debug Info
+                </summary>
+                <div className="mt-2 space-y-1">
+                  <div>{wpContent.length} WP posts | {newsContent.length} News items</div>
+                  <div><strong>WP Titles:</strong> {wpContent.map(p => p.title.rendered).join(", ")}</div>
+                  <div><strong>News Titles:</strong> {newsContent.map(p => p.title.rendered).join(", ")}</div>
+                </div>
+              </details>
             </div>
-
-
-
-          </>
+          </div>
         )}
       </header>
+
 
       {/* Rest of your component remains the same... */}
 
