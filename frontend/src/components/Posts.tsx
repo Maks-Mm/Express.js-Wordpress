@@ -8,7 +8,7 @@ import NewsInsertChart from "../components/NewsInsertChart";
 import "../App.css";
 import NewsForm from "../components/NewsForm"
 import NewsTable from "../components/NewsTable";
-
+import GlassButton from "./GlassButton"
 
 // Conditionally import AOS CSS to avoid issues in test environment
 if (typeof process === 'undefined' || process.env.NODE_ENV !== 'test') {
@@ -172,9 +172,10 @@ export default function Posts() {
 
     return (
       <div className="max-w-3xl mx-auto post-card mt-8" data-aos="fade-up">
-        <button onClick={handleBackClick} className="btn-glass mb-6">
-          ← Back to {isNews ? 'Live Updates' : 'Stable Content'}
-        </button>
+        <GlassButton
+          label={`← Back to ${isNews ? "Live Updates" : "Stable Content"}`}
+          onClick={handleBackClick}
+        />
 
 
         {isNews && (
@@ -357,12 +358,11 @@ export default function Posts() {
                   }}
                 />
 
-                <button
+                <GlassButton
+                  label="Read Foundation Post"
                   onClick={() => handleItemClick(item)}
-                  className="btn-glass bg-blue-500/10 hover:bg-blue-500/20 text-blue-700"
-                >
-                  Read Foundation Post
-                </button>
+                />
+
               </article>
             ))}
           </div>
@@ -511,13 +511,12 @@ export default function Posts() {
           </div>
         </section>
       )}
-
+      {/*place for GlassButton  */}
       {filteredContent.length === 0 && (
         <div className="text-center py-12" data-aos="fade-up">
           <p className="text-gray-500 text-lg mb-4">No content found.</p>
-          <button onClick={fetchContent} className="btn-glass">
-            Refresh Content
-          </button>
+          <GlassButton label="Refresh Content" onClick={fetchContent} />
+
         </div>
       )}
     </div>

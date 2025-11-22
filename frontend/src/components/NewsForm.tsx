@@ -2,6 +2,7 @@
 import "./NewsForm.css";
 import toast from "react-hot-toast";
 import { useState } from "react";
+import GlassButton from "./GlassButton";
 
 interface NewsFormProps {
   onSuccess: () => void;
@@ -45,7 +46,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
       setSuccess(true);
       setFormData({ title: '', content: '', description: '', source: '', link: '' });
       onSuccess();
-      
+
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add news');
@@ -68,7 +69,7 @@ const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
           <span className="title-icon">📰</span>
           <h3>Add MongoDB News</h3>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="form-grid">
           <div className="form-group">
             <label htmlFor="title" className="form-label">
@@ -165,23 +166,14 @@ const NewsForm: React.FC<NewsFormProps> = ({ onSuccess }) => {
 
           <div className="form-group full-width">
             <div className="form-actions">
-              <button
-                type="submit"
-                disabled={loading}
-                className={`gradient-btn ${loading ? 'loading' : ''}`}
-              >
-                {loading ? (
-                  <>
-                    <i className="fas fa-spinner fa-spin"></i>
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <i className="fas fa-plus-circle"></i>
-                    Add News
-                  </>
-                )}
-              </button>
+              <div className="form-actions">
+                <GlassButton
+                  label={loading ? "Adding..." : "Add News"}
+                  type="submit"
+                  onClick={handleSubmit} // now works perfectly!
+                />
+              </div>
+
             </div>
           </div>
         </form>

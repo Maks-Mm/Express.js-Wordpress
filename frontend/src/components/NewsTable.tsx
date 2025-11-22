@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./NewsTable.module.css";
+import GlassButton from "./GlassButton";
 
 interface NewsItem {
   id: string;
@@ -51,7 +52,8 @@ export default function NewsTable() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 className={styles.title}>📰 Latest News</h2>
-        <button onClick={fetchNews} className={styles.refreshBtn}>🔄 Refresh</button>
+        <GlassButton label="🔄 Refresh" onClick={fetchNews} />
+
       </div>
 
       <div className={styles.newsGrid}>
@@ -91,12 +93,11 @@ export default function NewsTable() {
       {/* Button to show/hide older news */}
       {olderNews.length > 0 && (
         <div style={{ textAlign: "center", marginTop: "1rem" }}>
-          <button
-            className={styles.refreshBtn}
+          <GlassButton
+            label={showAll ? "Hide Older News" : "Learn More ↓"}
             onClick={() => setShowAll((prev) => !prev)}
-          >
-            {showAll ? "Hide Older News" : "Learn More ↓"}
-          </button>
+          />
+
         </div>
       )}
     </div>
