@@ -9,7 +9,7 @@ module.exports = {
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
-        cabin: ['"Cabin Sketch"', 'cursive'],   // 👈 NEW FONT ADDED HERE
+        cabin: ['"Cabin Sketch"', 'cursive'],
       },
     },
   },

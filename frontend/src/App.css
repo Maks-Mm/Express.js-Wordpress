@@ -1,8 +1,10 @@
 /* frontend/src/App.css */
 
-/* Animated Background */
+/* inside App.css or wordpress.css */
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&display=swap');
+
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Cabin Sketch', cursive;
 }
 
 /* App.css */
