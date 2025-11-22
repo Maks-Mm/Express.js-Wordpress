@@ -1,3 +1,4 @@
+// tailwind.config.js
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -5,11 +6,15 @@ module.exports = {
       lineClamp: {
         2: '2',
         3: '3',
-      }
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
+        cabin: ['"Cabin Sketch"', 'cursive'],   // 👈 NEW FONT ADDED HERE
+      },
     },
   },
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/line-clamp'),
   ],
-}
+};

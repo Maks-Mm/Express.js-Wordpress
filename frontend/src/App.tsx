@@ -7,7 +7,7 @@ import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
-    <div className="app-container">
+    <div className="app-container font-poppins">  {/* 👈 use the font */}
       <AnimatedBackground />
       <Toaster position="top-right" />
       <div className="content-wrapper">

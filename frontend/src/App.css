@@ -1,13 +1,29 @@
 /* frontend/src/App.css */
 
 /* Animated Background */
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* App.css */
+.cabin-sketch-regular {
+  font-family: "Cabin Sketch", cursive;
+  font-weight: 400;
+}
+
+.cabin-sketch-bold {
+  font-family: "Cabin Sketch", cursive;
+  font-weight: 700;
+}
+
+
 .animated-background {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
+  background:
     linear-gradient(135deg, #1e1633 0%, #2d1b69 50%, #1e1633 100%),
     url('https://plus.unsplash.com/premium_photo-1721671634764-89ea581ab60c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1332');
   background-blend-mode: overlay;
@@ -19,25 +35,33 @@
 }
 
 @keyframes backgroundMove {
-  0%, 100% {
+
+  0%,
+  100% {
     background-position: center, 0% 0%;
   }
+
   25% {
     background-position: center, 100% 0%;
   }
+
   50% {
     background-position: center, 100% 100%;
   }
+
   75% {
     background-position: center, 0% 100%;
   }
 }
 
 @keyframes subtlePulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.8;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.9;
     transform: scale(1.02);
@@ -68,14 +92,14 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 
+  box-shadow:
     0 4px 20px rgba(255, 255, 255, 0.1),
     0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .btn-glass:hover {
   background: rgba(255, 255, 255, 0.2);
-  box-shadow: 
+  box-shadow:
     0 8px 25px rgba(255, 255, 255, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   transform: translateY(-3px);
@@ -84,21 +108,21 @@
 /* Enhanced Card Styles for Posts */
 /* backdrop-filter: blur(12px);*/
 .post-card {
-  
+
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   padding: 2rem;
   margin: 1rem 0;
   transition: all 0.3s ease;
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.1),
     0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .post-card:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 15px 40px rgba(0, 0, 0, 0.2),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.15);
@@ -159,12 +183,13 @@
   .animated-background {
     animation: backgroundMove 60s ease-in-out infinite;
   }
-  
+
   .post-card {
     padding: 1.5rem;
     margin: 0.5rem 0;
   }
 }
+
 /* WordPress Content Styling */
 .wp-content {
   color: rgba(255, 255, 255, 0.85);
@@ -221,7 +246,8 @@
 }
 
 .wp-content [style] {
-  color: inherit !important; /* override inline color from WordPress */
+  color: inherit !important;
+  /* override inline color from WordPress */
 }
 
 

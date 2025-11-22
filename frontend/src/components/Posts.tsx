@@ -240,7 +240,7 @@ export default function Posts() {
         style={{ color: "white" }}
       >
         {/* Title */}
-        <h1 className="text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
+        <h1 className="text-5xl font-extrabold text-white tracking-tight drop-shadow-md font-bold font-poppins">
           Dortmund News Hub
         </h1>
 
