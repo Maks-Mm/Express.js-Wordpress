@@ -22,7 +22,12 @@ export default function ScrollToTopButton() {
     if (!showButton) return null;
 
     return (
-        <button className={styles.button} id="scrollToTop">
+        <button 
+            className={styles.button} 
+            id="scrollToTop"
+            onClick={scrollToTop}
+            aria-label="Scroll to top"
+        >
             ↑
         </button>
     );
