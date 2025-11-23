@@ -1,192 +1,464 @@
-Great — here is a **SENIOR-LEVEL ROADMAP** for **Web Developers** focusing on **current top technologies + future direction**.
-This is **NOT junior learning**, but **architect-level / senior engineer path**.
+I'll help you convert the existing jQuery scroll effects to React components with TypeScript. Let me break this down into separate components with proper TypeScript and CSS modules.
 
----
+## 1. Sticky Header Component
 
-# 🧠 **SENIOR WEB DEVELOPER ROADMAP**
+```tsx
+// frontend/src/components/StickyHeader.tsx
+import { useEffect, useState } from "react";
+import styles from './StickyHeader.module.css';
 
-### **Goal** → Architect systems, design scalable solutions, lead teams, understand business
+interface StickyHeaderProps {
+  logo?: string;
+  menuItems?: string[];
+  onMenuItemClick?: (item: string) => void;
+}
 
----
+export default function StickyHeader({ 
+  logo = "Logo SITE", 
+  menuItems = ["SCROLL TO \"sticky_table\"", "box-1", "box-2", "box-3", "box-4", "box-5"],
+  onMenuItemClick 
+}: StickyHeaderProps) {
+  const [isSticky, setIsSticky] = useState(false);
 
-## 🔹 **1. Architecture & System Design (Most Important for Senior!)**
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsSticky(window.scrollY > 1);
+    };
 
-✔ Design scalable infrastructures
-✔ Understand trade-offs of technology
-✔ Read architecture diagrams & propose solutions
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
-**Key Topics:**
+  const handleClick = (item: string) => {
+    onMenuItemClick?.(item);
+  };
 
-| Area                  | Technologies & Concepts           |
-| --------------------- | --------------------------------- |
-| System Design         | Load Balancing, CDN, Cache Layers |
-| Scalability           | Horizontal vs Vertical            |
-| Patterns              | Microservices, Event-Driven, CQRS |
-| API Strategies        | GraphQL, REST, gRPC               |
-| Caching               | Redis, Memcached, CDN Edge        |
-| Message Brokers       | Kafka, RabbitMQ, SQS              |
-| Monitoring            | Prometheus, Grafana, Sentry       |
-| Architecture Diagrams | C4 Model, UML                     |
+  return (
+    <header className={`${styles.header} ${isSticky ? styles.sticky : ''}`}>
+      <div className={styles.logo}>{logo}</div>
+      <ul className={styles.navList}>
+        {menuItems.map((item, index) => (
+          <li 
+            key={index}
+            className={styles.navItem}
+            onClick={() => handleClick(item)}
+          >
+            {item}
+          </li>
+        ))}
+      </ul>
+    </header>
+  );
+}
+```
 
----
+```css
+/* frontend/src/components/StickyHeader.module.css */
+.header {
+  width: 100%;
+  height: 80px;
+  background-color: #016EB7;
+  display: flex;
+  justify-content: space-between;
+  transition: 0.2s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
 
-## 🧰 **2. Frontend – Senior Tech Trends**
+.logo {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-size: 28px;
+  padding: 0 20px;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  font-weight: 600;
+}
 
-### **🚀 Current Leaders**
+.navList {
+  display: flex;
+  justify-content: flex-end;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 
-| Category         | Strong Technologies               |
-| ---------------- | --------------------------------- |
-| Framework        | **Next.js 15**, React             |
-| Styling          | Tailwind, CSS Modules + shadcn/ui |
-| State Management | Zustand, Jotai, Server Actions    |
-| Build Tools      | Vite, Turbopack                   |
-| Testing          | Playwright, Vitest                |
-| Animations       | Framer Motion                     |
-| DX Tools         | Storybook, Chromatic              |
+.navItem {
+  display: flex;
+  width: 100px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
 
-### **🧭 Future Direction**
+.navItem:first-child {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-| Trend             | Technologies                    |
-| ----------------- | ------------------------------- |
-| Server-Driven UI  | React Server Components         |
-| AI-First Frontend | Next.js + AI APIs               |
-| Low JavaScript UX | Qwik.js, Solid.js               |
-| Edge Rendering    | Vercel Edge, Cloudflare Workers |
+.navItem:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
 
----
+.sticky {
+  height: 50px;
+  z-index: 999;
+}
 
-## ⚙️ **3. Backend & Fullstack – Senior Level**
+.sticky .logo {
+  font-size: 24px;
+}
+```
 
-| Area         | Technologies to Master                           |
-| ------------ | ------------------------------------------------ |
-| Language     | TypeScript, Go (growing fast), Rust (future)     |
-| Frameworks   | **NestJS**, FastAPI, Express, Next.js API routes |
-| APIs         | REST, GraphQL, gRPC                              |
-| Auth         | OAuth2, JWT, SSO, SAML                           |
-| Security     | OWASP Top 10, RCE, SQLi, XSS                     |
-| Performance  | Profiling, Parallel async patterns               |
-| Architecture | Serverless / Microservices                       |
+## 2. Sticky Table Component
 
----
+```tsx
+// frontend/src/components/StickyTable.tsx
+import { useEffect, useRef, useState } from "react";
+import styles from './StickyTable.module.css';
 
-## 🧪 **4. Testing & Quality (Senior Must Know)**
+interface StickyTableProps {
+  width?: string;
+  height?: string;
+  headingItems?: number;
+  contentItems?: number;
+}
 
-| Layer            | Technology          |
-| ---------------- | ------------------- |
-| Unit             | Jest, Vitest        |
-| Integration      | Supertest           |
-| E2E              | Playwright, Cypress |
-| Contract Testing | Pact                |
-| API Mocking      | MSW                 |
+export default function StickyTable({ 
+  width = "800px", 
+  height = "800px",
+  headingItems = 5,
+  contentItems = 12
+}: StickyTableProps) {
+  const [isFixed, setIsFixed] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
 
----
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!anchorRef.current || !headingRef.current) return;
 
-## 🗄 **5. Database Expertise**
+      const docTop = window.scrollY + 50;
+      const anchorTop = anchorRef.current.offsetTop;
 
-| Type      | Technologies                       |
-| --------- | ---------------------------------- |
-| SQL       | PostgreSQL (must know)             |
-| NoSQL     | MongoDB, Firebase                  |
-| Edge DBs  | PlanetScale, Supabase              |
-| ORM       | Prisma (**Very hot in 2024/2025**) |
-| Graph     | Neo4j                              |
-| Vector DB | **Pinecone, Weaviate** (AI future) |
+      if (docTop > anchorTop) {
+        if (!isFixed) {
+          setIsFixed(true);
+        }
+      } else {
+        if (isFixed) {
+          setIsFixed(false);
+        }
+      }
+    };
 
-**Advanced Concepts (Senior Level)**
-✔ Indexing & Query Optimization
-✔ Replication & Sharding
-✔ ACID vs BASE
-✔ Event Sourcing
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isFixed]);
 
----
+  return (
+    <section 
+      id="sticky_table" 
+      className={styles.stickyTable}
+      style={{ width, height }}
+    >
+      <div ref={anchorRef} className={styles.anchor} style={{ height: isFixed ? headingRef.current?.offsetHeight : 0 }} />
+      
+      <div 
+        ref={headingRef}
+        className={`${styles.heading} ${isFixed ? styles.fixed : ''}`}
+      >
+        {Array.from({ length: headingItems }, (_, index) => (
+          <div key={index} className={styles.headingItem} />
+        ))}
+      </div>
+      
+      <div className={styles.insContent}>
+        {Array.from({ length: contentItems }, (_, index) => (
+          <div key={index} className={styles.contentItem} />
+        ))}
+      </div>
+    </section>
+  );
+}
+```
 
-## ☁️ **6. DevOps & Cloud (Senior Mandatory)**
+```css
+/* frontend/src/components/StickyTable.module.css */
+.stickyTable {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0px;
+  margin: 0 auto;
+  position: relative;
+}
 
-| Topic         | Tech                               |
-| ------------- | ---------------------------------- |
-| Containers    | Docker                             |
-| Orchestration | Kubernetes                         |
-| Cloud         | AWS (Lambda, EC2, S3), GCP, Azure  |
-| CI/CD         | GitHub Actions                     |
-| IaC           | Terraform                          |
-| Observability | Grafana, Prometheus, OpenTelemetry |
+.anchor {
+  transition: height 0.2s;
+}
 
-**Future Trend** → **Serverless + Edge Computing + AI Pipelines**
+.heading {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 55px;
+  background-color: #EDECEC;
+  padding: 10px;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
 
----
+.headingItem {
+  width: 140px;
+  height: 35px;
+  background-color: #ff0000;
+}
 
-## 🔐 **7. Security & Compliance**
+.heading.fixed {
+  position: fixed;
+  top: 50px;
+  width: inherit;
+  max-width: 800px;
+  z-index: 99999;
+}
 
-| Must Know       | Tools/Standards      |
-| --------------- | -------------------- |
-| OWASP           | OWASP ZAP            |
-| Secrets         | Vault, AWS Secrets   |
-| Encryption      | KMS, TLS, AES        |
-| DDoS Protection | AWS Shield           |
-| Compliance      | GDPR, SOC2, ISO27001 |
+.insContent {
+  width: 100%;
+  height: 100%;
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
 
----
+.contentItem {
+  display: flex;
+  width: 150px;
+  height: 100px;
+  background-color: rgba(142, 193, 109, 0.7);
+  margin: 5px;
+}
+```
 
-## 🧠 **8. AI + Web Integration (Future Senior Direction)**
+## 3. Updated ScrollToTopButton Component
 
-| Trend            | Technologies                       |
-| ---------------- | ---------------------------------- |
-| AI Assistants    | OpenAI API / LangChain / Vercel AI |
-| RAG Architecture | Pinecone + Next.js                 |
-| AI Agents        | LangGraph                          |
-| LLM in Browser   | WebGPU + ONNX                      |
-| Voice UI         | OpenAI Realtime API                |
+```tsx
+// frontend/src/components/ScrollToTopButton.tsx
+import { useEffect, useState } from "react";
+import styles from './ScrollToTopButton.module.css';
 
-Future: **“Frontend + AI = New UX Revolution”**
+interface ScrollToTopButtonProps {
+  showAfter?: number;
+  bottom?: string;
+  right?: string;
+}
 
----
+export default function ScrollToTopButton({ 
+  showAfter = 100, 
+  bottom = "70px", 
+  right = "40px" 
+}: ScrollToTopButtonProps) {
+  const [showButton, setShowButton] = useState(false);
 
-## 🧭 **9. Senior Soft Skills**
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowButton(window.scrollY > showAfter);
+    };
 
-| Skill                  | Examples                           |
-| ---------------------- | ---------------------------------- |
-| Code Review            | Leave constructive feedback        |
-| Team Leadership        | Sprint planning, mentoring         |
-| Business Understanding | ROI, scalability, user analytics   |
-| Documentation          | Swagger, Notion, Architecture Docs |
-| Communication          | Explain complex ideas simply       |
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // Check initial position
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [showAfter]);
 
----
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-## 🧩 **10. Projects to Reach Senior Level**
+  if (!showButton) return null;
 
-Build at least **3 of these**:
+  return (
+    <button
+      onClick={scrollToTop}
+      className={styles.scrollToTop}
+      style={{ bottom, right }}
+      aria-label="Scroll to top"
+    >
+      <svg fill="#ffffff" height="48" viewBox="0 0 24 24" width="48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
+        <path d="M0 0h24v24H0z" fill="none"/>
+      </svg>
+    </button>
+  );
+}
+```
 
-| Project                        | Purpose                       |
-| ------------------------------ | ----------------------------- |
-| Scalable E-commerce platform   | Backend + caching + auth      |
-| Real-time chat with WebSockets | Performance + messaging queue |
-| AI-powered search engine       | Vector DB + RAG               |
-| Microservice system with Kafka | Architecture level            |
-| Financial dashboard            | Data visualization            |
+```css
+/* frontend/src/components/ScrollToTopButton.module.css */
+.scrollToTop {
+  width: 65px;
+  height: 65px;
+  position: fixed;
+  background-color: rgba(1, 110, 193, 0.7);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1000;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  padding: 0;
+}
 
----
+.scrollToTop:hover {
+  background-color: rgba(75, 115, 170, 1);
+  transform: scale(1.1);
+}
+```
 
-# 🔥 FINAL ADVICE:
+## 4. Products List Component
 
-### A senior is **not just coder** — **they make decisions**.
+```tsx
+// frontend/src/components/ProductsList.tsx
+import styles from './ProductsList.module.css';
 
-✔ Know **WHY** and not only **HOW**
-✔ Understand **cost, performance & team impact**
-✔ Write code your team **loves to maintain**
+interface ProductsListProps {
+  productCount?: number;
+}
 
----
+export default function ProductsList({ productCount = 10 }: ProductsListProps) {
+  return (
+    <section id="list_products" className={styles.productsList}>
+      {Array.from({ length: productCount }, (_, index) => (
+        <div key={index} className={styles.productItem} />
+      ))}
+    </section>
+  );
+}
+```
 
-Would you like:
-✔ **CV with Senior Tech Stack**
-✔ **Architecture Diagram Example**
-✔ **Senior-Level Project Ideas (with tasks)**
-✔ **Interview Questions for Senior Web Dev**
+```css
+/* frontend/src/components/ProductsList.module.css */
+.productsList {
+  height: 300px;
+  display: flex;
+  justify-content: space-around;
+  padding: 35px 0;
+  flex-wrap: wrap;
+  gap: 20px;
+}
 
-👉 Just tell me what you need next.
+.productItem {
+  width: 150px;
+  height: 150px;
+  background-color: #ccc;
+  border-radius: 4px;
+}
+```
 
+## 5. Footer Component
 
-google fonts for project - 
-1: https://fonts.google.com/specimen/Cabin+Sketch ,
-2: https://fonts.google.com/specimen/League+Gothic,
-3: https://fonts.google.com/specimen/Anton ,
+```tsx
+// frontend/src/components/Footer.tsx
+import styles from './Footer.module.css';
+
+interface FooterProps {
+  height?: string;
+}
+
+export default function Footer({ height = "150px" }: FooterProps) {
+  return (
+    <footer className={styles.footer} style={{ height }} />
+  );
+}
+```
+
+```css
+/* frontend/src/components/Footer.module.css */
+.footer {
+  width: 100%;
+  background-color: #2F2F2F;
+}
+```
+
+## 6. Main App Component
+
+```tsx
+// frontend/src/App.tsx
+import { useRef } from 'react';
+import StickyHeader from './components/StickyHeader';
+import ProductsList from './components/ProductsList';
+import StickyTable from './components/StickyTable';
+import Footer from './components/Footer';
+import ScrollToTopButton from './components/ScrollToTopButton';
+import './App.css';
+
+function App() {
+  const stickyTableRef = useRef<HTMLElement>(null);
+
+  const handleMenuItemClick = (item: string) => {
+    if (item.includes('sticky_table') && stickyTableRef.current) {
+      stickyTableRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <div className="app">
+      <StickyHeader onMenuItemClick={handleMenuItemClick} />
+      
+      <div className="wrap_content">
+        <ProductsList />
+        <StickyTable ref={stickyTableRef} />
+        <Footer />
+      </div>
+      
+      <ScrollToTopButton />
+    </div>
+  );
+}
+
+export default App;
+```
+
+```css
+/* frontend/src/App.css */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+.wrap_content {
+  margin-top: 100px;
+}
+```
+
+## Key Improvements Made:
+
+1. **TypeScript Support**: Proper typing for all props and state
+2. **CSS Modules**: Scoped styling for each component
+3. **Customizable Props**: Components accept props for customization
+4. **Performance**: Efficient event listeners with proper cleanup
+5. **Accessibility**: Added ARIA labels and semantic HTML
+6. **Reusability**: Each component can be easily reused with different configurations
+7. **No jQuery Dependency**: Pure React implementation with native browser APIs
+
+## Usage:
+
+All components are now modular and can be used independently. The main `App.tsx` shows how to compose them together with the scroll-to functionality working through React refs and callbacks.

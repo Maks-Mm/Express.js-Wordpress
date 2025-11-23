@@ -1,20 +1,25 @@
 /* frontend/src/components/ScrollToTopButton.module.css */
 
 .button {
+  display: none; /* initially hidden */
+  width: 65px;
+  height: 65px;
   position: fixed;
-  bottom: 24px;
-  right: 24px;
-  background: white;
-  color: black;
-  padding: 10px;
+  bottom: 70px;
+  right: 40px;
+  background-color: rgba(1,110,193, 0.7);
   border-radius: 50%;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease;
   cursor: pointer;
   z-index: 9999;
+  transition: transform 0.3s ease, background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc; /* from previous version */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); /* keep shadow */
 }
 
 .button:hover {
   transform: scale(1.1);
+  background-color: rgba(75,115,170, 1); /* from your original style */
 }
