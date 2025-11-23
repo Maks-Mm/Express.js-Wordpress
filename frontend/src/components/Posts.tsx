@@ -9,6 +9,9 @@ import "../App.css";
 import NewsForm from "../components/NewsForm"
 import NewsTable from "../components/NewsTable";
 import GlassButton from "./GlassButton"
+import ScrollToTopButton from "../components/ScrollToTopButton";
+//import StickyHeader from "../components/StickyHeader";
+//import StickyTable from "../components/StickyTable";
 
 // Conditionally import AOS CSS to avoid issues in test environment
 if (typeof process === 'undefined' || process.env.NODE_ENV !== 'test') {
@@ -87,6 +90,9 @@ export default function Posts() {
       setLoading(false);
     }
   };
+
+  console.log('Posts component rendering, content length:', content.length);
+  console.log('ScrollToTopButton should be rendered');
 
   const renderContent = (content: { rendered: string }) => {
     let cleanContent = content.rendered
@@ -233,12 +239,14 @@ export default function Posts() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
+
       {/* Header Section */}
       <header
         className="text-center mb-16 space-y-6"
         data-aos="fade-down"
         style={{ color: "white" }}
       >
+      <ScrollToTopButton />
         {/* Title */}
         <h1 className="text-5xl font-extrabold text-white tracking-tight drop-shadow-md font-bold font-poppins">
           Dortmund News Hub
@@ -516,9 +524,9 @@ export default function Posts() {
         <div className="text-center py-12" data-aos="fade-up">
           <p className="text-gray-500 text-lg mb-4">No content found.</p>
           <GlassButton label="Refresh Content" onClick={fetchContent} />
-
         </div>
       )}
+
     </div>
   );
 }
