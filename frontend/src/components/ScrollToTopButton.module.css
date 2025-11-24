@@ -1,35 +1,51 @@
 /* frontend/src/components/ScrollToTopButton.module.css */
 .button {
-  display: none; /* initially hidden */
-  width: 65px;
-  height: 65px;
-  position: fixed;
-  bottom: 70px;
-  right: 40px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  cursor: pointer;
-  z-index: 9999;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: 500;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 65px;
+    height: 65px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;        /* FULL ROUND */
+    background: rgba(255, 255, 255, 0.12);  /* GLASS */
+    backdrop-filter: blur(12px);            /* GLASS EFFECT */
+    -webkit-backdrop-filter: blur(12px);
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+
+    font-size: 1.8rem;
+    color: white;
+    transition: all 0.35s ease;
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25);  /* soft glass shadow */
 }
 
+/* --- Hover: moderner & sanfter --- */
 .button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px) scale(1.1);
+    background: rgba(255, 255, 255, 0.20);  
+    transform: translateY(-4px) scale(1.08);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.35);
 }
 
+/* --- Click/Active --- */
 .button:active {
-  transform: translateY(0) scale(1);
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.15);
+    transform: scale(1);
+    box-shadow: 0 5px 18px rgba(255, 255, 255, 0.22);
+}
+
+/* --- Pyramid Arrow --- */
+.pyramid {
+    width: 0;
+    height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-bottom: 20px solid white;
+    transition: transform 0.3s ease;
+}
+
+.button:hover .pyramid {
+    transform: translateY(-3px);
 }

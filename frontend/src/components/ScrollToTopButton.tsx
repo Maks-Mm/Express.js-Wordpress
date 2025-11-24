@@ -1,4 +1,5 @@
 // frontend/src/components/ScrollToTopButton.tsx
+
 import { useEffect, useState } from "react";
 import styles from "./ScrollToTopButton.module.css";
 
@@ -28,7 +29,7 @@ export default function ScrollToTopButton() {
             onClick={scrollToTop}
             aria-label="Scroll to top"
         >
-            ↑
+            <div className={styles.pyramid}></div>
         </button>
     );
 }
