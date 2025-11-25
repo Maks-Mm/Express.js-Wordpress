@@ -23,6 +23,14 @@ mongoose
 // WordPress API configuration
 const WP_API = "https://public-api.wordpress.com/wp/v2/sites/firstproduc.wordpress.com";
 
+app.get("/api/mongo/news", async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
+  const skip = (page - 1) * limit;
+  const news = await News.find().sort({ date: -1 }).skip(skip).limit(limit);
+  res.json(news);
+});
+
+
 // FIXED — only one endpoint
 app.get("/api/mongo/news", async (req, res) => {
   try {
