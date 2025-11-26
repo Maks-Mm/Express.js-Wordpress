@@ -1,6 +1,6 @@
 //wp-backend/services/newsService.js
 
-/*
+
 const News = require("../models/News");
 
 async function getPaginatedNews(page = 1, limit = 10) {
@@ -12,4 +12,4 @@ async function getPaginatedNews(page = 1, limit = 10) {
 }
 
 module.exports = { getPaginatedNews };
-*/
+

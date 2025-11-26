@@ -1,3 +1,6 @@
+// frontend/src/components/NewsTable.tsx7
+"use client"
+
 import { useEffect, useState } from "react";
 import styles from "./NewsTable.module.css";
 import GlassButton from "./GlassButton";
@@ -15,7 +18,7 @@ interface NewsItem {
 export default function NewsTable() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false); // NEW 🔥
+  const [showAll, setShowAll] = useState(false);
 
   const fetchNews = async () => {
     setLoading(true);
@@ -23,7 +26,7 @@ export default function NewsTable() {
       const res = await fetch("http://localhost:5000/api/mongo/news");
       const data = await res.json();
 
-      // Sort news by date - latest on top  🔥
+      // Sort news by date - latest on top
       const sorted = data.sort(
         (a: NewsItem, b: NewsItem) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
@@ -39,7 +42,18 @@ export default function NewsTable() {
     fetchNews();
   }, []);
 
-  const stripHtml = (html: string) => html.replace(/<[^>]+>/g, "");
+  // Safe stripHtml function with better error handling
+  const stripHtml = (html: string | undefined | null): string => {
+    if (!html) return "";
+    return html.replace(/<[^>]+>/g, "");
+  };
+
+  // Safe content extraction
+  const getContent = (item: NewsItem): string => {
+    const excerpt = item.excerpt?.rendered;
+    const content = item.content?.rendered;
+    return stripHtml(excerpt || content || "");
+  };
 
   if (loading) return <div className={styles.loading}>Loading latest news...</div>;
   if (news.length === 0) return <div className={styles.empty}>No news articles found.</div>;
@@ -53,7 +67,6 @@ export default function NewsTable() {
       <div className={styles.header}>
         <h2 className={styles.title}>📰 Latest News</h2>
         <GlassButton label="🔄 Refresh" onClick={fetchNews} />
-
       </div>
 
       <div className={styles.newsGrid}>
@@ -62,13 +75,15 @@ export default function NewsTable() {
             <h3 className={styles.newsTitle}>
               {item.link ? (
                 <a href={item.link} target="_blank" rel="noopener noreferrer" className={styles.titleLink}>
-                  {stripHtml(item.title.rendered)}
+                  {stripHtml(item.title?.rendered)}
                 </a>
-              ) : stripHtml(item.title.rendered)}
+              ) : (
+                stripHtml(item.title?.rendered)
+              )}
             </h3>
 
             <p className={styles.excerpt}>
-              {stripHtml(item.excerpt?.rendered || item.content?.rendered || "").slice(0, 160)}…
+              {getContent(item).slice(0, 160)}…
             </p>
 
             <div className={styles.cardFooter}>
@@ -97,7 +112,6 @@ export default function NewsTable() {
             label={showAll ? "Hide Older News" : "Learn More ↓"}
             onClick={() => setShowAll((prev) => !prev)}
           />
-
         </div>
       )}
     </div>

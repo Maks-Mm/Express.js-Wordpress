@@ -1,6 +1,6 @@
 //wp-backend/routes/newsRoutes.js
 
-/*
+
 
 const express = require("express");
 const router = express.Router();
@@ -13,4 +13,4 @@ router.get("/news", async (req, res) => {
 });
 
 module.exports = router;
-*/
+
