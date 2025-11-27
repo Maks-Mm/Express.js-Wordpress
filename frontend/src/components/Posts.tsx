@@ -11,6 +11,7 @@ import NewsTable from "../components/NewsTable";
 import GlassButton from "./GlassButton"
 import ScrollToTopButton from "../components/ScrollToTopButton";
 
+
 // Conditionally import AOS CSS to avoid issues in test environment
 if (typeof process === 'undefined' || process.env.NODE_ENV !== 'test') {
   try {

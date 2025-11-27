@@ -5,6 +5,9 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import News from "./wp-backend/models/News.js";
 
+import newsRoutes from "./wp-backend/routes/newsRoutes.js";
+import wpRoutes from "./wp-backend/routes/wordpressRoutes.js";
+
 dotenv.config();
 
 const app = express();
@@ -22,6 +25,26 @@ mongoose
 
 // WordPress API configuration
 const WP_API = "https://public-api.wordpress.com/wp/v2/sites/firstproduc.wordpress.com";
+
+
+// Add this route to handle root path
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Express backend is running!',
+    endpoints: [
+      '/api/health',
+      '/api/posts',
+      '/api/news',
+      '/api/mongo/news',
+      '/api/content',
+      '/api/debug/wordpress'
+    ]
+  });
+});
+
+
+app.use("/api", newsRoutes);
+app.use("/api", wpRoutes);
 
 app.get("/api/mongo/news", async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
@@ -248,13 +271,15 @@ app.get("/api/content", async (req, res) => {
       : [];
 
     // Process static Dortmund news
-    const staticNews = staticNewsResult.status === 'fulfilled'
+    const staticNews = staticNewsResult.status === 'fulfilled' &&
+      Array.isArray(staticNewsResult.value?.data)
       ? staticNewsResult.value.data.map(item => ({
         ...item,
         id: `static-${item.id}`,
         type: "news",
       }))
       : [];
+
 
     const combined = [...wpPosts, ...mongoNews, ...staticNews].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
