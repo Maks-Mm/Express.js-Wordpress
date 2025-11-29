@@ -10,6 +10,7 @@ import NewsForm from "../components/NewsForm"
 import NewsTable from "../components/NewsTable";
 import GlassButton from "./GlassButton"
 import ScrollToTopButton from "../components/ScrollToTopButton";
+import FotterToClientPage from "./FotterToClientPage";
 
 
 // Conditionally import AOS CSS to avoid issues in test environment
@@ -524,7 +525,7 @@ export default function Posts() {
           <GlassButton label="Refresh Content" onClick={fetchContent} />
         </div>
       )}
-
+<FotterToClientPage/>
     </div>
   );
 }
